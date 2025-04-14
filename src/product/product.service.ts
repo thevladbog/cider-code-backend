@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { CreatedProductDto, CreateProductDto } from './dto/create-product.dto';
+import { CreatedProductId, CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'nestjs-prisma';
+import { SelectProductDto } from './dto/select-product.dto';
+import { ProductStatusType } from '../../prisma/generated/zod';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto): Promise<CreatedProductDto> {
-    const res = await this.prismaService.product.create({
+  async create(createProductDto: CreateProductDto): Promise<CreatedProductId> {
+    return this.prismaService.product.create({
       data: { ...createProductDto },
+      select: {
+        id: true,
+      },
     });
-
-    return {
-      data: res,
-    };
   }
 
-  async findAll() {
+  async findAll(): Promise<SelectProductDto[]> {
     return this.prismaService.product.findMany();
   }
 
@@ -29,7 +30,10 @@ export class ProductService {
     });
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<UpdateProductDto> {
     return this.prismaService.product.update({
       where: {
         id,
@@ -44,6 +48,44 @@ export class ProductService {
     return this.prismaService.product.delete({
       where: {
         id,
+      },
+    });
+  }
+
+  async updateStatus(
+    id: string,
+    status: ProductStatusType,
+  ): Promise<UpdateProductDto> {
+    return this.prismaService.product.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
+    });
+  }
+
+  async search(query: string): Promise<SelectProductDto[]> {
+    return this.prismaService.product.findMany({
+      where: {
+        OR: [
+          {
+            shortName: {
+              contains: query,
+            },
+          },
+          {
+            fullName: {
+              contains: query,
+            },
+          },
+          {
+            gtin: {
+              contains: query,
+            },
+          },
+        ],
       },
     });
   }

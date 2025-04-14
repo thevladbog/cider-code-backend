@@ -3,22 +3,8 @@ generator client {
 }
 
 generator zod-prisma-types {
-  provider                         = "zod-prisma-types"
-  output                           = "./generated/zod" // default is ./generated/zod
-  useMultipleFiles                 = false // default is false
-  writeBarrelFiles                 = true // default is true
-  createInputTypes                 = true // default is true
-  createModelTypes                 = true // default is true
-  addInputTypeValidation           = true // default is true
-  addIncludeType                   = false // default is true
-  addSelectType                    = true // default is true
-  validateWhereUniqueInput         = false // default is false
-  createOptionalDefaultValuesTypes = false // default is false
-  createRelationValuesTypes        = false // default is false
-  createPartialTypes               = false // default is false
-  useDefaultValidators             = true // default is true
-  coerceDate                       = true // default is true
-  writeNullishInModelTypes         = false // default is false
+  provider = "zod-prisma-types"
+  output   = "./generated/zod" // default is ./generated/zod
 }
 
 datasource db {
