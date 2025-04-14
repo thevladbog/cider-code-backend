@@ -14,7 +14,7 @@ services:
       - .env
 
   nest-postgres:
-    image: postgres:14
+    image: postgres:17
     container_name: nest-postgres
     restart: always
     ports:
