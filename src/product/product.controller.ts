@@ -54,7 +54,6 @@ export class ProductController {
   }
 
   @Get(':id')
-  @Get()
   @ApiResponse({
     status: 200,
     type: SelectProductDto,
@@ -100,7 +99,6 @@ export class ProductController {
   }
 
   @Get('search')
-  @Get()
   @ApiResponse({
     status: 200,
     type: SelectProductDto,
