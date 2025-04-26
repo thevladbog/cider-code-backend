@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -16,8 +18,8 @@ import {
   UpdateProductStatusDto,
 } from './dto/update-product.dto';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SelectProductDto } from './dto/select-product.dto';
+import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IProductFindMay, SelectProductDto } from './dto/select-product.dto';
 
 @ApiTags('Product')
 @Controller('product')
@@ -45,12 +47,26 @@ export class ProductController {
   @Get()
   @ApiResponse({
     status: 200,
-    type: SelectProductDto,
-    isArray: true,
+    type: IProductFindMay,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async findAll(): Promise<SelectProductDto[]> {
-    return this.productService.findAll();
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+  })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+  ): Promise<IProductFindMay> {
+    return this.productService.findAll(page, limit);
   }
 
   @Get(':id')
