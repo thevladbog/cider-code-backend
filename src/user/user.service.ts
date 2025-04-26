@@ -9,7 +9,9 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
-    const hashedPassword = await this.hashPassword(createUserDto.password);
+    const hashedPassword = await this.hashPassword(
+      createUserDto.password as string,
+    );
     const data = await this.prismaService.user.create({
       data: {
         ...createUserDto,
@@ -55,7 +57,9 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ): Promise<CreatedUserDto> {
     if (updateUserDto.password) {
-      const hashedPassword = await this.hashPassword(updateUserDto.password);
+      const hashedPassword = await this.hashPassword(
+        updateUserDto.password as string,
+      );
       updateUserDto.password = hashedPassword;
     }
 
