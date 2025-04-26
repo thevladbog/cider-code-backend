@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatedProductId, CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'nestjs-prisma';
-import { SelectProductDto } from './dto/select-product.dto';
+import { IProductFindMay, SelectProductDto } from './dto/select-product.dto';
 import { ProductStatusType } from '../../prisma/generated/zod';
 
 @Injectable()
@@ -18,8 +18,24 @@ export class ProductService {
     });
   }
 
-  async findAll(): Promise<SelectProductDto[]> {
-    return this.prismaService.product.findMany();
+  async findAll(page: number, limit: number): Promise<IProductFindMay> {
+    const raw = await this.prismaService.$transaction([
+      this.prismaService.product.count(),
+      this.prismaService.product.findMany({
+        take: limit,
+        skip: limit * (page - 1),
+      }),
+    ]);
+
+    const [total, data] = raw;
+
+    return {
+      result: data,
+      total,
+      page,
+      limit,
+      totalPage: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {
