@@ -1,8 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreatedUserDto, CreateUserDto } from './dto/create-user.dto';
+import {
+  CreatedUserDto,
+  CreateUserDto,
+  IUserFindMay,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'nestjs-prisma';
 import * as argon2 from 'argon2';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -10,7 +15,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
     const hashedPassword = await this.hashPassword(
-      createUserDto.password as string,
+      String(createUserDto.password),
     );
     const data = await this.prismaService.user.create({
       data: {
@@ -24,13 +29,28 @@ export class UserService {
     return res;
   }
 
-  async findAll(): Promise<CreatedUserDto[]> {
-    const data = await this.prismaService.user.findMany();
+  async findAll(page: number, limit: number): Promise<IUserFindMay> {
+    const raw = await this.prismaService.$transaction([
+      this.prismaService.user.count(),
+      this.prismaService.user.findMany({
+        take: limit,
+        skip: limit * (page - 1),
+      }),
+    ]);
+
+    const [total, data] = raw;
+
     const cleanedData = data.map((user) => {
       return this.hashPasswordInObject(user);
     });
 
-    return cleanedData;
+    return {
+      result: cleanedData,
+      total,
+      page,
+      limit,
+      totalPage: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string): Promise<CreatedUserDto> {
@@ -43,7 +63,7 @@ export class UserService {
     if (!data) {
       throw new HttpException(
         `User with id ${id} can't be found or something went wrong`,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -58,45 +78,53 @@ export class UserService {
   ): Promise<CreatedUserDto> {
     if (updateUserDto.password) {
       const hashedPassword = await this.hashPassword(
-        updateUserDto.password as string,
+        String(updateUserDto.password),
       );
       updateUserDto.password = hashedPassword;
     }
 
-    const data = await this.prismaService.user.update({
-      where: {
-        id,
-      },
-      data: updateUserDto,
-    });
+    try {
+      const data = await this.prismaService.user.update({
+        where: { id },
+        data: updateUserDto,
+      });
 
-    if (!data) {
-      throw new HttpException(
-        `User with id ${id} can't be found or something went wrong`,
-        HttpStatus.BAD_REQUEST,
-      );
+      return this.hashPasswordInObject(data);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new HttpException(
+            `User with id ${id} not found`,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+
+      throw error;
     }
-
-    const res = this.hashPasswordInObject(data);
-
-    return res;
   }
 
-  async remove(id: string): Promise<string> {
-    const data = await this.prismaService.user.delete({
-      where: {
-        id,
-      },
-    });
+  async remove(id: string): Promise<{ id: string; message: string }> {
+    try {
+      const data = await this.prismaService.user.delete({
+        where: {
+          id,
+        },
+      });
 
-    if (!data) {
-      throw new HttpException(
-        `User with id ${id} can't be found or something went wrong`,
-        HttpStatus.BAD_REQUEST,
-      );
+      return { id: data.id, message: 'User successfully deleted' };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new HttpException(
+            `User with id ${id} not found`,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+
+      throw error;
     }
-
-    return data.id;
   }
 
   async hashPassword(password: string): Promise<string> {
