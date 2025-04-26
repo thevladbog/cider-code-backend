@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { patchNestJsSwagger } from 'nestjs-zod';
 import { PrismaService } from 'nestjs-prisma';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { AppModule } from './app.module';
 
 patchNestJsSwagger();
 
@@ -12,10 +12,9 @@ async function bootstrap() {
   patchNestJsSwagger();
 
   const config = new DocumentBuilder()
-    .setTitle('CIDER [CODE] Backend')
-    .setDescription('The Cider Code API description')
+    .setTitle('BOTTLE [CODE] Backend')
+    .setDescription('The Bottle Code API description')
     .setVersion('1.0')
-    .addTag('cider')
     .build();
 
   const document = SwaggerModule.createDocument(app, config); // serializable object - conform to OpenAPI
@@ -31,8 +30,8 @@ async function bootstrap() {
       spec: {
         content: document,
       },
-      title: 'CIDER [CODE] Backend API',
-      slug: 'cider-code',
+      title: 'BOTTLE [CODE] Backend API',
+      slug: 'bottle-code',
       _integration: 'nestjs',
     }),
   );
@@ -47,4 +46,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3033);
 }
 
-bootstrap();
+void bootstrap();
