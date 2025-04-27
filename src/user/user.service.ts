@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreatedUserDto,
   CreateUserDto,
@@ -12,21 +12,35 @@ import { Prisma } from '@prisma/client';
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
+  private readonly logger = new Logger(UserService.name);
 
   async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
-    const hashedPassword = await this.hashPassword(
-      String(createUserDto.password),
-    );
-    const data = await this.prismaService.user.create({
-      data: {
-        ...createUserDto,
-        password: hashedPassword,
-      },
-    });
+    try {
+      const hashedPassword = await this.hashPassword(
+        String(createUserDto.password),
+      );
+      const data = await this.prismaService.user.create({
+        data: {
+          ...createUserDto,
+          password: hashedPassword,
+        },
+      });
 
-    const res = this.hashPasswordInObject(data);
+      const res = this.hashPasswordInObject(data);
 
-    return res;
+      return res;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          this.logger.error('The character already exists', error);
+          throw new HttpException(
+            { message: 'Введенные данные не уникальны', error },
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async findAll(page: number, limit: number): Promise<IUserFindMay> {
@@ -93,6 +107,7 @@ export class UserService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
+          this.logger.error(`User with id ${id} not found`, error);
           throw new HttpException(
             `User with id ${id} not found`,
             HttpStatus.NOT_FOUND,
@@ -100,6 +115,7 @@ export class UserService {
         }
       }
 
+      this.logger.error('Something went wrong', error);
       throw error;
     }
   }
@@ -116,6 +132,7 @@ export class UserService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
+          this.logger.error(`User with id ${id} not found`, error);
           throw new HttpException(
             `User with id ${id} not found`,
             HttpStatus.NOT_FOUND,
@@ -123,6 +140,7 @@ export class UserService {
         }
       }
 
+      this.logger.error('Something went wrong', error);
       throw error;
     }
   }

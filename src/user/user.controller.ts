@@ -30,6 +30,10 @@ export class UserController {
     description: 'User successfully created',
     type: CreatedUserDto,
   })
+  @ApiResponse({
+    status: 400,
+    description: "Data isn't unique",
+  })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto): Promise<CreatedUserDto> {
