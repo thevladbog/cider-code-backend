@@ -53,7 +53,7 @@ export class UserController {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE || '57600000'),
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
     });
 
     return { result: user };
@@ -139,7 +139,7 @@ export class UserController {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE || '57600000'),
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
     });
 
     res.send({ user: user });
