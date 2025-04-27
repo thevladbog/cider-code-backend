@@ -32,13 +32,15 @@ export class UserService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          this.logger.error('The character already exists', error);
+          this.logger.error('The user already exists', error);
           throw new HttpException(
-            { message: 'Введенные данные не уникальны', error },
+            { message: 'The provided data is not unique', error },
             HttpStatus.BAD_REQUEST,
           );
         }
       }
+
+      this.logger.error('Something ent wrong', error);
       throw error;
     }
   }
