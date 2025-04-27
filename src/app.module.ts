@@ -1,6 +1,7 @@
 import { HttpStatus, Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { ZodSerializerInterceptor } from 'nestjs-zod';
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 import { HttpExceptionFilter } from './http-exception.filter';
 import {
   PrismaClientExceptionFilter,
@@ -10,6 +11,8 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
+import { LoggerModule } from 'nestjs-pino';
+import { loggerOptions } from './config/logger.config';
 
 @Module({
   imports: [
@@ -21,6 +24,8 @@ import { UserModule } from './user/user.module';
     }),
     ProductModule,
     UserModule,
+    SentryModule.forRoot(),
+    LoggerModule.forRoot(loggerOptions),
   ],
   controllers: [],
   providers: [
@@ -32,6 +37,10 @@ import { UserModule } from './user/user.module';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
     },
     {
       provide: APP_FILTER,
