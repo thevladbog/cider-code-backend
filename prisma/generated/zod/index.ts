@@ -45,6 +45,8 @@ export const OperatorScalarFieldEnumSchema = z.enum(['id','name','barcode','crea
 
 export const UserScalarFieldEnumSchema = z.enum(['id','email','firstName','lastName','password','created','modified']);
 
+export const RevokedTokenScalarFieldEnumSchema = z.enum(['id','jti']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
@@ -174,6 +176,17 @@ export const UserSchema = z.object({
 })
 
 export type User = z.infer<typeof UserSchema>
+
+/////////////////////////////////////////
+// REVOKED TOKEN SCHEMA
+/////////////////////////////////////////
+
+export const RevokedTokenSchema = z.object({
+  id: z.string(),
+  jti: z.string(),
+})
+
+export type RevokedToken = z.infer<typeof RevokedTokenSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -374,6 +387,14 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   password: z.boolean().optional(),
   created: z.boolean().optional(),
   modified: z.boolean().optional(),
+}).strict()
+
+// REVOKED TOKEN
+//------------------------------------------------------
+
+export const RevokedTokenSelectSchema: z.ZodType<Prisma.RevokedTokenSelect> = z.object({
+  id: z.boolean().optional(),
+  jti: z.boolean().optional(),
 }).strict()
 
 
@@ -898,6 +919,55 @@ export const UserScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserScal
   modified: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
 
+export const RevokedTokenWhereInputSchema: z.ZodType<Prisma.RevokedTokenWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => RevokedTokenWhereInputSchema),z.lazy(() => RevokedTokenWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => RevokedTokenWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => RevokedTokenWhereInputSchema),z.lazy(() => RevokedTokenWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  jti: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const RevokedTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.RevokedTokenOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  jti: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RevokedTokenWhereUniqueInputSchema: z.ZodType<Prisma.RevokedTokenWhereUniqueInput> = z.union([
+  z.object({
+    id: z.string(),
+    jti: z.string()
+  }),
+  z.object({
+    id: z.string(),
+  }),
+  z.object({
+    jti: z.string(),
+  }),
+])
+.and(z.object({
+  id: z.string().optional(),
+  jti: z.string().optional(),
+  AND: z.union([ z.lazy(() => RevokedTokenWhereInputSchema),z.lazy(() => RevokedTokenWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => RevokedTokenWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => RevokedTokenWhereInputSchema),z.lazy(() => RevokedTokenWhereInputSchema).array() ]).optional(),
+}).strict());
+
+export const RevokedTokenOrderByWithAggregationInputSchema: z.ZodType<Prisma.RevokedTokenOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  jti: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => RevokedTokenCountOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => RevokedTokenMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => RevokedTokenMinOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const RevokedTokenScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.RevokedTokenScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => RevokedTokenScalarWhereWithAggregatesInputSchema),z.lazy(() => RevokedTokenScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => RevokedTokenScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => RevokedTokenScalarWhereWithAggregatesInputSchema),z.lazy(() => RevokedTokenScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  jti: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
 export const ProductCreateInputSchema: z.ZodType<Prisma.ProductCreateInput> = z.object({
   id: z.string({ description: "The unique identifier for the product"}).optional(),
   shortName: z.string(),
@@ -1387,6 +1457,41 @@ export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedU
   password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const RevokedTokenCreateInputSchema: z.ZodType<Prisma.RevokedTokenCreateInput> = z.object({
+  id: z.string().optional(),
+  jti: z.string()
+}).strict();
+
+export const RevokedTokenUncheckedCreateInputSchema: z.ZodType<Prisma.RevokedTokenUncheckedCreateInput> = z.object({
+  id: z.string().optional(),
+  jti: z.string()
+}).strict();
+
+export const RevokedTokenUpdateInputSchema: z.ZodType<Prisma.RevokedTokenUpdateInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  jti: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const RevokedTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.RevokedTokenUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  jti: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const RevokedTokenCreateManyInputSchema: z.ZodType<Prisma.RevokedTokenCreateManyInput> = z.object({
+  id: z.string().optional(),
+  jti: z.string()
+}).strict();
+
+export const RevokedTokenUpdateManyMutationInputSchema: z.ZodType<Prisma.RevokedTokenUpdateManyMutationInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  jti: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const RevokedTokenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.RevokedTokenUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  jti: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -1954,6 +2059,21 @@ export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderBy
   password: z.lazy(() => SortOrderSchema).optional(),
   created: z.lazy(() => SortOrderSchema).optional(),
   modified: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RevokedTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.RevokedTokenCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  jti: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RevokedTokenMaxOrderByAggregateInputSchema: z.ZodType<Prisma.RevokedTokenMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  jti: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const RevokedTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.RevokedTokenMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  jti: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const IndividualCodeCreateNestedManyWithoutProductInputSchema: z.ZodType<Prisma.IndividualCodeCreateNestedManyWithoutProductInput> = z.object({
@@ -4255,6 +4375,63 @@ export const UserFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.UserFindUniqueOrT
   where: UserWhereUniqueInputSchema,
 }).strict() ;
 
+export const RevokedTokenFindFirstArgsSchema: z.ZodType<Prisma.RevokedTokenFindFirstArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereInputSchema.optional(),
+  orderBy: z.union([ RevokedTokenOrderByWithRelationInputSchema.array(),RevokedTokenOrderByWithRelationInputSchema ]).optional(),
+  cursor: RevokedTokenWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ RevokedTokenScalarFieldEnumSchema,RevokedTokenScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const RevokedTokenFindFirstOrThrowArgsSchema: z.ZodType<Prisma.RevokedTokenFindFirstOrThrowArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereInputSchema.optional(),
+  orderBy: z.union([ RevokedTokenOrderByWithRelationInputSchema.array(),RevokedTokenOrderByWithRelationInputSchema ]).optional(),
+  cursor: RevokedTokenWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ RevokedTokenScalarFieldEnumSchema,RevokedTokenScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const RevokedTokenFindManyArgsSchema: z.ZodType<Prisma.RevokedTokenFindManyArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereInputSchema.optional(),
+  orderBy: z.union([ RevokedTokenOrderByWithRelationInputSchema.array(),RevokedTokenOrderByWithRelationInputSchema ]).optional(),
+  cursor: RevokedTokenWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ RevokedTokenScalarFieldEnumSchema,RevokedTokenScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const RevokedTokenAggregateArgsSchema: z.ZodType<Prisma.RevokedTokenAggregateArgs> = z.object({
+  where: RevokedTokenWhereInputSchema.optional(),
+  orderBy: z.union([ RevokedTokenOrderByWithRelationInputSchema.array(),RevokedTokenOrderByWithRelationInputSchema ]).optional(),
+  cursor: RevokedTokenWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const RevokedTokenGroupByArgsSchema: z.ZodType<Prisma.RevokedTokenGroupByArgs> = z.object({
+  where: RevokedTokenWhereInputSchema.optional(),
+  orderBy: z.union([ RevokedTokenOrderByWithAggregationInputSchema.array(),RevokedTokenOrderByWithAggregationInputSchema ]).optional(),
+  by: RevokedTokenScalarFieldEnumSchema.array(),
+  having: RevokedTokenScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const RevokedTokenFindUniqueArgsSchema: z.ZodType<Prisma.RevokedTokenFindUniqueArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereUniqueInputSchema,
+}).strict() ;
+
+export const RevokedTokenFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.RevokedTokenFindUniqueOrThrowArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereUniqueInputSchema,
+}).strict() ;
+
 export const ProductCreateArgsSchema: z.ZodType<Prisma.ProductCreateArgs> = z.object({
   select: ProductSelectSchema.optional(),
   include: ProductIncludeSchema.optional(),
@@ -4572,5 +4749,55 @@ export const UserUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.UserUpdateManyA
 
 export const UserDeleteManyArgsSchema: z.ZodType<Prisma.UserDeleteManyArgs> = z.object({
   where: UserWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const RevokedTokenCreateArgsSchema: z.ZodType<Prisma.RevokedTokenCreateArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  data: z.union([ RevokedTokenCreateInputSchema,RevokedTokenUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const RevokedTokenUpsertArgsSchema: z.ZodType<Prisma.RevokedTokenUpsertArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereUniqueInputSchema,
+  create: z.union([ RevokedTokenCreateInputSchema,RevokedTokenUncheckedCreateInputSchema ]),
+  update: z.union([ RevokedTokenUpdateInputSchema,RevokedTokenUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const RevokedTokenCreateManyArgsSchema: z.ZodType<Prisma.RevokedTokenCreateManyArgs> = z.object({
+  data: z.union([ RevokedTokenCreateManyInputSchema,RevokedTokenCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const RevokedTokenCreateManyAndReturnArgsSchema: z.ZodType<Prisma.RevokedTokenCreateManyAndReturnArgs> = z.object({
+  data: z.union([ RevokedTokenCreateManyInputSchema,RevokedTokenCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const RevokedTokenDeleteArgsSchema: z.ZodType<Prisma.RevokedTokenDeleteArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  where: RevokedTokenWhereUniqueInputSchema,
+}).strict() ;
+
+export const RevokedTokenUpdateArgsSchema: z.ZodType<Prisma.RevokedTokenUpdateArgs> = z.object({
+  select: RevokedTokenSelectSchema.optional(),
+  data: z.union([ RevokedTokenUpdateInputSchema,RevokedTokenUncheckedUpdateInputSchema ]),
+  where: RevokedTokenWhereUniqueInputSchema,
+}).strict() ;
+
+export const RevokedTokenUpdateManyArgsSchema: z.ZodType<Prisma.RevokedTokenUpdateManyArgs> = z.object({
+  data: z.union([ RevokedTokenUpdateManyMutationInputSchema,RevokedTokenUncheckedUpdateManyInputSchema ]),
+  where: RevokedTokenWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const RevokedTokenUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.RevokedTokenUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ RevokedTokenUpdateManyMutationInputSchema,RevokedTokenUncheckedUpdateManyInputSchema ]),
+  where: RevokedTokenWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const RevokedTokenDeleteManyArgsSchema: z.ZodType<Prisma.RevokedTokenDeleteManyArgs> = z.object({
+  where: RevokedTokenWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;

@@ -11,6 +11,9 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Res,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -20,6 +23,9 @@ import {
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { SignInDto } from './dto/sign-in.dto';
+import { Request, Response } from 'express';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -36,8 +42,17 @@ export class UserController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDto): Promise<CreatedUserDto> {
-    return await this.userService.create(createUserDto);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Res() res: Response,
+  ): Promise<{ result: CreatedUserDto }> {
+    const { user, token } = await this.userService.create(createUserDto);
+
+    res.cookie('jwt', token, { httpOnly: true });
+
+    res.status(201).send({ user: user });
+
+    return { result: user };
   }
 
   @ApiResponse({
@@ -57,6 +72,7 @@ export class UserController {
     type: Number,
     description: 'Items per page',
   })
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -74,9 +90,11 @@ export class UserController {
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<CreatedUserDto> {
-    return await this.userService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<{ result: CreatedUserDto }> {
+    const result = await this.userService.findOne(id);
+    return { result };
   }
 
   @ApiResponse({
@@ -87,18 +105,42 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<CreatedUserDto> {
-    return await this.userService.update(id, updateUserDto);
+  ): Promise<{ result: CreatedUserDto }> {
+    const result = await this.userService.update(id, updateUserDto);
+    return { result };
   }
 
   @ApiResponse({
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(
     @Param('id') id: string,
   ): Promise<{ id: string; message: string }> {
     return await this.userService.remove(id);
+  }
+
+  @Post('auth/sign-in')
+  async signIn(@Body() credentials: SignInDto, @Res() res: Response) {
+    const { user, token }: { user: Partial<CreatedUserDto>; token: string } =
+      await this.userService.signIn(credentials);
+
+    res.cookie('jwt', token, { httpOnly: true });
+
+    res.send({ user: user });
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('auth/revoke-token')
+  async revokeToken(@Req() req: Request): Promise<{ revoked: boolean }> {
+    return { revoked: await this.userService.revokeToken(req.user.jti) };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/me')
+  async getMe(@Req() req: Request): Promise<{ result: CreatedUserDto }> {
+    return { result: await this.userService.findOne(req.user.sub) };
   }
 }

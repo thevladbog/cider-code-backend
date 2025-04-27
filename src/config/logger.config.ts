@@ -13,7 +13,19 @@ export const loggerOptions: Params = {
       genReqId: (req): ReqId =>
         (<Request>req).header('X-Request-Id') ?? nanoid(),
       ...(process.env.NODE_ENV === 'production'
-        ? {}
+        ? {
+            target: 'pino-sentry-transport',
+            options: {
+              sentry: {
+                dsn: process.env.SENTRY_DSN,
+              },
+              withLogRecord: true,
+              tags: ['level'],
+              context: ['hostname'],
+              minLevel: 40,
+              expectPinoConfig: true,
+            },
+          }
         : {
             level: 'debug',
             transport: {
@@ -27,32 +39,6 @@ export const loggerOptions: Params = {
       customProps: () => ({
         context: 'HTTP',
       }),
-      transport: {
-        targets: [
-          {
-            target: 'pino/file',
-            options: {
-              destination: `./app.log`,
-            },
-          },
-
-          process.env.NODE_ENV !== 'production'
-            ? { target: 'pino-pretty' }
-            : {
-                target: 'pino-sentry-transport',
-                options: {
-                  sentry: {
-                    dsn: process.env.SENTRY_DSN,
-                  },
-                  withLogRecord: true,
-                  tags: ['level'],
-                  context: ['hostname'],
-                  minLevel: 40,
-                  expectPinoConfig: true,
-                },
-              },
-        ],
-      },
     },
     multistream(
       [

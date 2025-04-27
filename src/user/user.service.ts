@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CreatedUserDto,
   CreateUserDto,
@@ -8,13 +14,21 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'nestjs-prisma';
 import * as argon2 from 'argon2';
 import { Prisma } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/sign-in.dto';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
   private readonly logger = new Logger(UserService.name);
 
-  async create(createUserDto: CreateUserDto): Promise<CreatedUserDto> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<{ user: CreatedUserDto; token: string }> {
     try {
       const hashedPassword = await this.hashPassword(
         String(createUserDto.password),
@@ -28,7 +42,12 @@ export class UserService {
 
       const res = this.hashPasswordInObject(data);
 
-      return res;
+      const token = await this.jwtService.signAsync(
+        {},
+        { jwtid: nanoid(), subject: res.id },
+      );
+
+      return { user: res, token };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -70,7 +89,7 @@ export class UserService {
   }
 
   async findOne(id: string): Promise<CreatedUserDto> {
-    const data = await this.prismaService.user.findUnique({
+    const data = await this.prismaService.user.findUniqueOrThrow({
       where: {
         id,
       },
@@ -145,6 +164,35 @@ export class UserService {
       this.logger.error('Something went wrong', error);
       throw error;
     }
+  }
+
+  async signIn(
+    credentials: SignInDto,
+  ): Promise<{ user: CreatedUserDto; token: string }> {
+    const user = await this.prismaService.user.findUnique({
+      where: { email: credentials.email },
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const res = this.hashPasswordInObject(user);
+
+    const token = await this.jwtService.signAsync(
+      {},
+      { jwtid: nanoid(), subject: res.id },
+    );
+
+    return { user: res, token };
+  }
+
+  async revokeToken(jti: string) {
+    await this.prismaService.revokedToken.create({ data: { jti } });
+
+    return true;
+  }
+
+  async getById(id: string) {
+    return await this.prismaService.user.findUniqueOrThrow({ where: { id } });
   }
 
   async hashPassword(password: string): Promise<string> {

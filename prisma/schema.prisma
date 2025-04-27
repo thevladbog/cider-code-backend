@@ -111,6 +111,11 @@ model User {
   modified DateTime? @updatedAt @map("updated_at")
 }
 
+model RevokedToken {
+  id  String @id @default(nanoid()) @map("_id")
+  jti String @unique
+}
+
 enum ProductStatus {
   ACTIVE
   INACTIVE
