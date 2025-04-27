@@ -13,6 +13,7 @@ import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger.config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -26,6 +27,11 @@ import { loggerOptions } from './config/logger.config';
     UserModule,
     SentryModule.forRoot(),
     LoggerModule.forRoot(loggerOptions),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRES },
+    }),
   ],
   controllers: [],
   providers: [

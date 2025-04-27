@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "name": "bottle-code-backend",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.0005207061767578125,
+  "filesCount": 4,
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "{{url}}"
+  }
+}

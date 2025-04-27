@@ -11,15 +11,23 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Res,
+  UseGuards,
+  Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
   CreatedUserDto,
   CreateUserDto,
   IUserFindMay,
+  IUserFindOne,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { SignInDto } from './dto/sign-in.dto';
+import { Request, Response } from 'express';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -28,7 +36,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
-    type: CreatedUserDto,
+    type: IUserFindOne,
   })
   @ApiResponse({
     status: 400,
@@ -36,8 +44,19 @@ export class UserController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDto): Promise<CreatedUserDto> {
-    return await this.userService.create(createUserDto);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<IUserFindOne> {
+    const { user, token } = await this.userService.create(createUserDto);
+
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
+    });
+
+    return { result: user };
   }
 
   @ApiResponse({
@@ -57,6 +76,7 @@ export class UserController {
     type: Number,
     description: 'Items per page',
   })
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -68,37 +88,75 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns the requested user',
-    type: CreatedUserDto,
+    type: IUserFindOne,
   })
   @ApiResponse({
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<CreatedUserDto> {
-    return await this.userService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<IUserFindOne> {
+    const result = await this.userService.findOne(id);
+    return { result };
   }
 
   @ApiResponse({
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<CreatedUserDto> {
-    return await this.userService.update(id, updateUserDto);
+  ): Promise<IUserFindOne> {
+    const result = await this.userService.update(id, updateUserDto);
+    return { result };
   }
 
   @ApiResponse({
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(
     @Param('id') id: string,
   ): Promise<{ id: string; message: string }> {
     return await this.userService.remove(id);
+  }
+
+  @HttpCode(HttpStatus.CREATED)
+  @Post('auth/sign-in')
+  async signIn(
+    @Body() credentials: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, token }: { user: Partial<CreatedUserDto>; token: string } =
+      await this.userService.signIn(credentials);
+
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
+    });
+
+    res.send({ user: user });
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('auth/revoke-token')
+  async revokeToken(@Req() req: Request): Promise<{ revoked: boolean }> {
+    if (!req.user.jti) {
+      throw new BadRequestException('Token ID (jti) is missing');
+    }
+    return { revoked: await this.userService.revokeToken(req.user.jti) };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/me')
+  async getMe(@Req() req: Request): Promise<IUserFindOne> {
+    return { result: await this.userService.findOne(req.user.sub) };
   }
 }
