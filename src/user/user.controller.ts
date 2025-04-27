@@ -20,6 +20,7 @@ import {
   CreatedUserDto,
   CreateUserDto,
   IUserFindMay,
+  IUserFindOne,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -34,7 +35,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
-    type: CreatedUserDto,
+    type: IUserFindOne,
   })
   @ApiResponse({
     status: 400,
@@ -45,7 +46,7 @@ export class UserController {
   async create(
     @Body() createUserDto: CreateUserDto,
     @Res() res: Response,
-  ): Promise<{ result: CreatedUserDto }> {
+  ): Promise<IUserFindOne> {
     const { user, token } = await this.userService.create(createUserDto);
 
     res.cookie('jwt', token, { httpOnly: true });
@@ -84,7 +85,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns the requested user',
-    type: CreatedUserDto,
+    type: IUserFindOne,
   })
   @ApiResponse({
     status: 404,
@@ -92,7 +93,7 @@ export class UserController {
   })
   @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<{ result: CreatedUserDto }> {
+  async findOne(@Param('id') id: string): Promise<IUserFindOne> {
     const result = await this.userService.findOne(id);
     return { result };
   }
@@ -105,7 +106,7 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<{ result: CreatedUserDto }> {
+  ): Promise<IUserFindOne> {
     const result = await this.userService.update(id, updateUserDto);
     return { result };
   }
@@ -140,7 +141,7 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('/me')
-  async getMe(@Req() req: Request): Promise<{ result: CreatedUserDto }> {
+  async getMe(@Req() req: Request): Promise<IUserFindOne> {
     return { result: await this.userService.findOne(req.user.sub) };
   }
 }

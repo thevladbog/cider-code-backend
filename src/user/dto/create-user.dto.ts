@@ -12,3 +12,7 @@ export class IUserFindMay {
   limit: number;
   totalPage: number;
 }
+
+export class IUserFindOne {
+  result: CreatedUserDto;
+}
