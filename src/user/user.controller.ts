@@ -53,7 +53,7 @@ export class UserController {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 16,
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE || '57600000'),
     });
 
     return { result: user };
@@ -105,6 +105,7 @@ export class UserController {
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -138,7 +139,7 @@ export class UserController {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 16,
+      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE || '57600000'),
     });
 
     res.send({ user: user });

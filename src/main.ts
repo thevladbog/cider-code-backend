@@ -25,12 +25,12 @@ async function bootstrap() {
     // Tracing must be enabled for profiling to work
     tracesSampleRate:
       process.env.NODE_ENV === 'production'
-        ? parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.1')
+        ? parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE ?? '0.1')
         : 1.0,
     // Set sampling rate for profiling - this is evaluated only once per SDK.init call
     profilesSampleRate:
       process.env.NODE_ENV === 'production'
-        ? parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '0.1')
+        ? parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE ?? '0.1')
         : 1.0,
   });
 
