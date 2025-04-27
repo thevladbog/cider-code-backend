@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreatedUserDto,
   CreateUserDto,
@@ -42,10 +36,7 @@ export class UserService {
 
       const res = this.hashPasswordInObject(data);
 
-      const token = await this.jwtService.signAsync(
-        {},
-        { jwtid: nanoid(), subject: res.id },
-      );
+      const token = await this.getJwtToken(res.id);
 
       return { user: res, token };
     } catch (error) {
@@ -173,16 +164,22 @@ export class UserService {
       where: { email: credentials.email },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user)
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 
-    const res = this.hashPasswordInObject(user);
-
-    const token = await this.jwtService.signAsync(
-      {},
-      { jwtid: nanoid(), subject: res.id },
+    const valid = await this.comparePasswords(
+      user.password,
+      credentials.password,
     );
+    if (!valid) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
 
-    return { user: res, token };
+    const safeUser = this.hashPasswordInObject(user);
+
+    const token = await this.getJwtToken(safeUser.id);
+
+    return { user: safeUser, token };
   }
 
   async revokeToken(jti: string) {
@@ -210,5 +207,18 @@ export class UserService {
       ...object,
       password: 'hashed_password',
     };
+  }
+
+  async getJwtToken(id: string) {
+    const token = await this.jwtService.signAsync(
+      {},
+      {
+        jwtid: nanoid(),
+        subject: id,
+        expiresIn: process.env.JWT_EXPIRES ?? '1h',
+      },
+    );
+
+    return token;
   }
 }

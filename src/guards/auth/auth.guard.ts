@@ -26,15 +26,17 @@ export class AuthGuard implements CanActivate {
       const request: Request = context.switchToHttp().getRequest();
 
       const token: string = String(request.cookies['jwt']);
-      if (!token) throw new UnauthorizedException();
+      if (!token) throw new UnauthorizedException('JWT cookie missing');
 
       // Verify the JWT and check if it has been revoked
       //--------------------------------------------------------------------------
-
-      const payload: JwtPayload = await this.jwtService.verifyAsync(
-        String(request.cookies['jwt']),
-        { secret: process.env.JWT_SECRET },
-      );
+      if (!process.env.JWT_SECRET) {
+        this.logger.error('JWT_SECRET env var is not set');
+        throw new UnauthorizedException();
+      }
+      const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
 
       const revokedToken: { id: string; jti: string } | null =
         await this.prisma.revokedToken.findUnique({

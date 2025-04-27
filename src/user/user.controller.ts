@@ -14,6 +14,7 @@ import {
   Res,
   UseGuards,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -45,13 +46,15 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createUserDto: CreateUserDto,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<IUserFindOne> {
     const { user, token } = await this.userService.create(createUserDto);
 
-    res.cookie('jwt', token, { httpOnly: true });
-
-    res.status(201).send({ user: user });
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 16,
+    });
 
     return { result: user };
   }
@@ -123,12 +126,20 @@ export class UserController {
     return await this.userService.remove(id);
   }
 
+  @HttpCode(HttpStatus.CREATED)
   @Post('auth/sign-in')
-  async signIn(@Body() credentials: SignInDto, @Res() res: Response) {
+  async signIn(
+    @Body() credentials: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { user, token }: { user: Partial<CreatedUserDto>; token: string } =
       await this.userService.signIn(credentials);
 
-    res.cookie('jwt', token, { httpOnly: true });
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 16,
+    });
 
     res.send({ user: user });
   }
@@ -136,6 +147,9 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Post('auth/revoke-token')
   async revokeToken(@Req() req: Request): Promise<{ revoked: boolean }> {
+    if (!req.user.jti) {
+      throw new BadRequestException('Token ID (jti) is missing');
+    }
     return { revoked: await this.userService.revokeToken(req.user.jti) };
   }
 
