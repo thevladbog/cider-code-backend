@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { z } from 'zod';
 import {
@@ -12,18 +18,10 @@ import {
 
 @Injectable()
 export class CodeService {
-  private ssccSchema = z.string().length(18);
+  private readonly ssccSchema = z.string().length(18);
+  private readonly logger = new Logger(CodeService.name);
 
   constructor(private readonly prisma: PrismaService) {}
-
-  private calculateCheckDigit(sscc: string): number {
-    const digits = sscc.split('').map(Number);
-    const sum = digits.reduce((acc, digit, index) => {
-      return acc + (index % 2 === 0 ? digit * 3 : digit);
-    }, 0);
-    const nextMultipleOfTen = Math.ceil(sum / 10) * 10;
-    return nextMultipleOfTen - sum;
-  }
 
   async writeIndividualCode(
     writeIndividualCodeDto: WriteIndividualCodeDto,
@@ -38,27 +36,46 @@ export class CodeService {
   async getNextSscc(
     writeBoxesCodeDto: WriteBoxesCodeDto,
   ): Promise<BoxesCodeDataDto> {
-    const { gln, productId, currentSscc } = writeBoxesCodeDto;
-    const newCode = await this.generateNextSscc(currentSscc);
+    try {
+      const { gln, productId, currentSscc } = writeBoxesCodeDto;
+      z.string().min(1).parse(gln);
+      z.string().min(1).parse(productId);
+      const newCode = await this.generateNextSscc(currentSscc);
 
-    const data = await this.writeSsccCodeToBase(newCode, gln, productId);
+      const data = await this.writeSsccCodeToBase(newCode, gln, productId);
 
-    return data;
+      return data;
+    } catch (error) {
+      this.logger.error('Failed to generate next SSCC code:', error);
+      throw error;
+    }
   }
 
   async generateNextSscc(sscc?: string): Promise<string> {
     let ssccToUse: string;
 
     if (sscc) {
-      this.ssccSchema.parse(sscc);
+      try {
+        this.ssccSchema.parse(sscc);
+      } catch (error) {
+        this.logger.error('Invalid SSCC format, ', error);
+        throw new BadRequestException('Invalid SSCC format');
+      }
       ssccToUse = sscc;
     } else {
-      const lastSscc = await this.prisma.boxesCode.findFirst({
-        orderBy: { created: 'desc' },
-      });
+      let lastSscc: BoxesCodeDataDto | null = null;
+      try {
+        lastSscc = await this.prisma.boxesCode.findFirst({
+          orderBy: { created: 'desc' },
+        });
+      } catch (error) {
+        this.logger.error('DB error retrieving last SSCC, ', error);
+        throw new InternalServerErrorException('DB error retrieving last SSCC');
+      }
 
       if (!lastSscc) {
-        throw new Error('Нет сохраненных кодов SSCC в базе данных');
+        this.logger.error('No SSCC codes found in database');
+        throw new NotFoundException('No SSCC codes found in database');
       }
 
       ssccToUse = lastSscc.sscc;
@@ -80,14 +97,32 @@ export class CodeService {
   }
 
   async writeSsccCodeToBase(sscc: string, gln: string, productId: string) {
-    const data = await this.prisma.boxesCode.create({
-      data: {
-        sscc,
-        gln,
-        productId,
-      },
-    });
+    this.ssccSchema.parse(sscc);
+    z.string().min(1).parse(gln);
+    z.string().min(1).parse(productId);
 
-    return data;
+    try {
+      const data = await this.prisma.boxesCode.create({
+        data: {
+          sscc,
+          gln,
+          productId,
+        },
+      });
+
+      return data;
+    } catch (error) {
+      this.logger.error('Failed to write SSCC code to database:', error);
+      throw error;
+    }
+  }
+
+  private calculateCheckDigit(sscc: string): number {
+    const digits = sscc.split('').map(Number);
+    const sum = digits.reduce((acc, digit, index) => {
+      return acc + (index % 2 === 0 ? digit * 3 : digit);
+    }, 0);
+    const nextMultipleOfTen = Math.ceil(sum / 10) * 10;
+    return nextMultipleOfTen - sum;
   }
 }
