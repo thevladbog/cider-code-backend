@@ -7,12 +7,18 @@ import { AppModule } from './app.module';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import * as cookieParser from 'cookie-parser';
 import * as Sentry from '@sentry/nestjs';
+import * as fs from 'fs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 patchNestJsSwagger();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    key: fs.readFileSync('./src/config/cert/key.pem'),
+    cert: fs.readFileSync('./src/config/cert/cert.pem'),
+  };
+
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   patchNestJsSwagger();
 
   app.useLogger(app.get(Logger));
