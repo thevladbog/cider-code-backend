@@ -97,11 +97,11 @@ export class CodeService {
   }
 
   async writeSsccCodeToBase(sscc: string, gln: string, productId: string) {
-    this.ssccSchema.parse(sscc);
-    z.string().min(1).parse(gln);
-    z.string().min(1).parse(productId);
-
     try {
+      this.ssccSchema.parse(sscc);
+      z.string().min(1).parse(gln);
+      z.string().min(1).parse(productId);
+
       const data = await this.prisma.boxesCode.create({
         data: {
           sscc,
@@ -110,10 +110,16 @@ export class CodeService {
         },
       });
 
-      return data;
+      return data as BoxesCodeDataDto;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        this.logger.error('Invalid input data format:', error);
+        throw new BadRequestException('Invalid input data format');
+      }
       this.logger.error('Failed to write SSCC code to database:', error);
-      throw error;
+      throw new InternalServerErrorException(
+        'Failed to write SSCC code to database',
+      );
     }
   }
 
