@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger.config';
 import { JwtModule } from '@nestjs/jwt';
+import { CodeModule } from './code/code.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRES },
     }),
+    CodeModule,
   ],
   controllers: [],
   providers: [
