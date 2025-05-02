@@ -8,12 +8,12 @@ import {
   PrismaModule,
   PrismaService,
 } from 'nestjs-prisma';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger.config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { CodeModule } from './code/code.module';
 import { OperatorModule } from './operator/operator.module';
 
@@ -29,10 +29,21 @@ import { OperatorModule } from './operator/operator.module';
     UserModule,
     SentryModule.forRoot(),
     LoggerModule.forRoot(loggerOptions),
-    JwtModule.register({
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const options: JwtModuleOptions = {
+          publicKey: '../config/cert/jwt_public_key.pem',
+          privateKey: '../config/cert/jwt_private_key.pem',
+          signOptions: {
+            expiresIn: configService.get<string>('JWT_EXPIRES'),
+            algorithm: 'RS256',
+          },
+        };
+        return options;
+      },
       global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES },
+      inject: [ConfigService],
     }),
     CodeModule,
     OperatorModule,

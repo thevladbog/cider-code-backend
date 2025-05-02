@@ -12,6 +12,8 @@ import { Reflector } from '@nestjs/core';
 
 import { JwtPayload } from 'src/contracts/jwt-payload/jwt-payload.interface';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
+import * as fs from 'fs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,6 +21,7 @@ export class AuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly reflector: Reflector,
+    private readonly configService: ConfigService,
   ) {}
   private readonly logger = new Logger(AuthGuard.name);
 
@@ -46,8 +49,13 @@ export class AuthGuard implements CanActivate {
         this.logger.error('JWT_SECRET env var is not set');
         throw new UnauthorizedException();
       }
+      const cert = fs.readFileSync(
+        __dirname + '/../../../../config/cert/jwt_private_key.pem',
+        'utf8',
+      );
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
+        publicKey: cert,
+        algorithms: ['RS256'],
       });
 
       const revokedToken: { id: string; jti: string } | null =

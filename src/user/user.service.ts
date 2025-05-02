@@ -11,6 +11,7 @@ import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/sign-in.dto';
 import { nanoid } from 'nanoid';
+import * as fs from 'fs';
 
 @Injectable()
 export class UserService {
@@ -214,12 +215,19 @@ export class UserService {
   }
 
   async getJwtToken(id: string) {
+    const privateKey = fs.readFileSync(
+      __dirname + '/../../../config/cert/jwt_private_key.pem',
+      'utf8',
+    );
+
+    console.log(__dirname);
     const token = await this.jwtService.signAsync(
       {},
       {
         jwtid: nanoid(),
         subject: id,
         expiresIn: process.env.JWT_EXPIRES ?? '1h',
+        privateKey,
       },
     );
 
