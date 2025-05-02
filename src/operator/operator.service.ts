@@ -7,12 +7,10 @@ import {
   IOperatorFindMay,
   IOperatorFindOne,
 } from './dto/create-operator.dto';
-import {
-  UpdatedOperatorDto,
-  UpdateOperatorDto,
-} from './dto/update-operator.dto';
+import { UpdateOperatorDto } from './dto/update-operator.dto';
 import { MAIN_PREFIX } from 'src/constants/main.constants';
 import { UserService } from 'src/user/user.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OperatorService {
@@ -50,49 +48,23 @@ export class OperatorService {
   async updateOperator(
     id: string,
     updateOperatorDto: UpdateOperatorDto,
-  ): Promise<UpdatedOperatorDto | undefined> {
-    let newBarcode: string;
+  ): Promise<IOperatorFindOne | undefined> {
+    const dataToUpdate: Prisma.OperatorUpdateInput = {};
 
-    if (updateOperatorDto.barcode) {
-      newBarcode = this.generateBarcode();
-
-      try {
-        await this.prisma.operator.update({
-          where: {
-            id,
-          },
-          data: {
-            barcode: newBarcode,
-          },
-        });
-      } catch (error) {
-        this.logger.error('Failed to update barcode of operator:', error);
-        throw error;
-      }
+    if (updateOperatorDto.regenerateBarcode) {
+      dataToUpdate.barcode = this.generateBarcode();
     }
-
     if (updateOperatorDto.name) {
-      try {
-        await this.prisma.operator.update({
-          where: {
-            id,
-          },
-          data: {
-            name: updateOperatorDto.name,
-          },
-        });
-      } catch (error) {
-        this.logger.error('Failed to update name of operator:', error);
-        throw error;
-      }
+      dataToUpdate.name = updateOperatorDto.name;
     }
+    if (Object.keys(dataToUpdate).length === 0) {
+      return await this.getOne(id);
+    }
+
+    await this.prisma.operator.update({ where: { id }, data: dataToUpdate });
 
     try {
-      const data = await this.prisma.operator.findUnique({
-        where: {
-          id,
-        },
-      });
+      const data = await this.getOne(id);
 
       if (data) return data;
     } catch (error) {

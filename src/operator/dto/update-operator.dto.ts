@@ -2,7 +2,7 @@ import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 const UpdateOperator = z.object({
-  barcode: z.boolean().optional(),
+  regenerateBarcode: z.boolean().optional(),
   name: z.string().optional(),
 });
 

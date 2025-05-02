@@ -80,6 +80,10 @@ export class UserService {
   }
 
   async findOne(id: string | undefined): Promise<CreatedUserDto> {
+    if (!id) {
+      throw new HttpException('User ID is required', HttpStatus.BAD_REQUEST);
+    }
+
     const data = await this.prismaService.user.findUniqueOrThrow({
       where: {
         id,

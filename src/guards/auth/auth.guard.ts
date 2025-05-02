@@ -62,10 +62,10 @@ export class AuthGuard implements CanActivate {
 
       if (jwtType[0] === JWT_TYPE.Common) {
         request.user = payload;
-      }
-
-      if (jwtType[0] === JWT_TYPE.Operator) {
+      } else if (jwtType[0] === JWT_TYPE.Operator) {
         request.operator = payload;
+      } else {
+        throw new UnauthorizedException('Unsupported JWT type');
       }
 
       return true;

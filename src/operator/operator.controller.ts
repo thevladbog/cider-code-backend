@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -12,6 +13,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { OperatorService } from './operator.service';
@@ -48,14 +50,25 @@ export class OperatorController {
     return await this.operatorService.createOperator(createOperatorDto);
   }
 
+  @ApiResponse({ status: 200, type: IOperatorFindOne })
+  @ApiResponse({ status: 404, description: 'Operator not found' })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateOperator(
     @Param('id') id: string,
     @Body() updateOperatorDto: UpdateOperatorDto,
-  ) {
-    return await this.operatorService.updateOperator(id, updateOperatorDto);
+  ): Promise<IOperatorFindOne> {
+    const res = await this.operatorService.updateOperator(
+      id,
+      updateOperatorDto,
+    );
+
+    if (!res) {
+      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    return res;
   }
 
   @ApiResponse({
@@ -129,7 +142,9 @@ export class OperatorController {
   @UseGuards(AuthGuard)
   @Get('/me')
   async getMe(@Req() req: Request): Promise<IOperatorFindOne> {
-    console.log({ req: req.operator, user: req.user });
-    return await this.operatorService.getOne(req?.operator?.sub);
+    if (!req.operator?.sub) {
+      throw new UnauthorizedException('Operator token missing');
+    }
+    return await this.operatorService.getOne(req.operator.sub);
   }
 }
