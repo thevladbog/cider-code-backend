@@ -28,6 +28,8 @@ import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { JwtType } from 'src/guards/auth/jwt.metadata';
+import { JWT_TYPE } from 'src/constants/jwt.constants';
 
 @Controller('user')
 export class UserController {
@@ -76,6 +78,7 @@ export class UserController {
     type: Number,
     description: 'Items per page',
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get()
   async findAll(
@@ -94,6 +97,7 @@ export class UserController {
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IUserFindOne> {
@@ -105,6 +109,7 @@ export class UserController {
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Patch(':id')
   async update(
@@ -119,6 +124,7 @@ export class UserController {
     status: 404,
     description: "User can't be found or something went wrong",
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(
@@ -145,6 +151,7 @@ export class UserController {
     res.send({ user: user });
   }
 
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Post('auth/revoke-token')
   async revokeToken(@Req() req: Request): Promise<{ revoked: boolean }> {
@@ -154,6 +161,7 @@ export class UserController {
     return { revoked: await this.userService.revokeToken(req.user.jti) };
   }
 
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get('/me')
   async getMe(@Req() req: Request): Promise<IUserFindOne> {
