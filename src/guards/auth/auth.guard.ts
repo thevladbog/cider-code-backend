@@ -8,6 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { PrismaService } from 'nestjs-prisma';
+import { Reflector } from '@nestjs/core';
 
 import { JwtPayload } from 'src/contracts/jwt-payload/jwt-payload.interface';
 
@@ -16,16 +17,26 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly reflector: Reflector,
   ) {}
   private readonly logger = new Logger(AuthGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const jwtType = this.reflector.getAllAndOverride<string[]>('jwt', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (!jwtType) {
+      return false;
+    }
+
     try {
       // Try to retrieve the JWT from request's cookies
       //--------------------------------------------------------------------------
       const request: Request = context.switchToHttp().getRequest();
 
-      const token: string = String(request.cookies['jwt']);
+      const token: string = String(request.cookies[jwtType[0]]);
       if (!token) throw new UnauthorizedException('JWT cookie missing');
 
       // Verify the JWT and check if it has been revoked

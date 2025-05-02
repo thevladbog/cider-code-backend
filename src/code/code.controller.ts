@@ -17,6 +17,8 @@ import {
   WriteBoxesCodeDto,
 } from './dto/write-boxes-code.dto';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { JwtType } from 'src/guards/auth/jwt.metadata';
+import { JWT_TYPE } from 'src/constants/jwt.constants';
 
 @Controller('code')
 export class CodeController {
@@ -27,6 +29,7 @@ export class CodeController {
     description: 'Code successfully created',
     type: IndividualCodeDataDto,
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Post('/individual')
   @HttpCode(HttpStatus.CREATED)
@@ -41,6 +44,7 @@ export class CodeController {
     description: 'Code successfully created',
     type: BoxesCodeDataDto,
   })
+  @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Post('/boxes')
   @HttpCode(HttpStatus.CREATED)
