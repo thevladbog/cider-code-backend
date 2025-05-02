@@ -155,16 +155,16 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Post('auth/revoke-token')
   async revokeToken(@Req() req: Request): Promise<{ revoked: boolean }> {
-    if (!req.user.jti) {
+    if (!req?.user?.jti) {
       throw new BadRequestException('Token ID (jti) is missing');
     }
-    return { revoked: await this.userService.revokeToken(req.user.jti) };
+    return { revoked: await this.userService.revokeToken(req?.user?.jti) };
   }
 
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get('/me')
   async getMe(@Req() req: Request): Promise<IUserFindOne> {
-    return { result: await this.userService.findOne(req.user.sub) };
+    return { result: await this.userService.findOne(req?.user?.sub) };
   }
 }

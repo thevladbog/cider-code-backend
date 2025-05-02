@@ -11,6 +11,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { Reflector } from '@nestjs/core';
 
 import { JwtPayload } from 'src/contracts/jwt-payload/jwt-payload.interface';
+import { JWT_TYPE } from 'src/constants/jwt.constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -22,7 +23,7 @@ export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const jwtType = this.reflector.getAllAndOverride<string[]>('jwt', [
+    const jwtType = this.reflector.getAllAndOverride<string[]>('jwtType', [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -58,7 +59,16 @@ export class AuthGuard implements CanActivate {
 
       // Attach user's data to the request
       //--------------------------------------------------------------------------
-      request.user = payload;
+
+      if (jwtType[0] === JWT_TYPE.Common) {
+        request.user = payload;
+      }
+
+      if (jwtType[0] === JWT_TYPE.Operator) {
+        request.operator = payload;
+      }
+
+      console.log({ payload, jwtType });
 
       return true;
     } catch (err: unknown) {

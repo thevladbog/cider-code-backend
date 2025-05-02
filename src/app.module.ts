@@ -15,6 +15,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from './config/logger.config';
 import { JwtModule } from '@nestjs/jwt';
 import { CodeModule } from './code/code.module';
+import { OperatorModule } from './operator/operator.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CodeModule } from './code/code.module';
       signOptions: { expiresIn: process.env.JWT_EXPIRES },
     }),
     CodeModule,
+    OperatorModule,
   ],
   controllers: [],
   providers: [

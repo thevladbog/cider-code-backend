@@ -79,7 +79,7 @@ export class UserService {
     };
   }
 
-  async findOne(id: string): Promise<CreatedUserDto> {
+  async findOne(id: string | undefined): Promise<CreatedUserDto> {
     const data = await this.prismaService.user.findUniqueOrThrow({
       where: {
         id,
