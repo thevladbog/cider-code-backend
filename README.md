@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/thevladbog/cider-code-backend" target="blank"><img src="./public/img/BOTTLE-CODE-LOGO.png" width="120" alt="BOTTLE [CODE] Logo" /></a>
+  <a href="https://github.com/thevladbog/cider-code-backend" target="blank"><img src="./public/img/BOTTLE-CODE-LOGO.png" width="600" alt="BOTTLE [CODE] Logo" /></a>
 </p>
 
 ## Description
