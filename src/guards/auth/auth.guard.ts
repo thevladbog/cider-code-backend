@@ -68,8 +68,6 @@ export class AuthGuard implements CanActivate {
         request.operator = payload;
       }
 
-      console.log({ payload, jwtType });
-
       return true;
     } catch (err: unknown) {
       this.logger.error(err);

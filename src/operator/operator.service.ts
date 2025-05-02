@@ -111,8 +111,6 @@ export class OperatorService {
 
       const token = await this.userService.getJwtToken(operator.id);
 
-      console.log({ token });
-
       return token;
     } catch (error) {
       this.logger.error('Invalid credentials:', error);
