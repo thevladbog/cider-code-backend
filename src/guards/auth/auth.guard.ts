@@ -49,12 +49,12 @@ export class AuthGuard implements CanActivate {
         this.logger.error('JWT_SECRET env var is not set');
         throw new UnauthorizedException();
       }
-      const cert = fs.readFileSync(
-        __dirname + '/../../../../config/cert/jwt_private_key.pem',
+      const publicKey = fs.readFileSync(
+        __dirname + '/../../../../config/cert/jwt_public_key.pem',
         'utf8',
       );
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
-        publicKey: cert,
+        publicKey,
         algorithms: ['RS256'],
       });
 

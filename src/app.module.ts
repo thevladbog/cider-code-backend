@@ -16,6 +16,8 @@ import { loggerOptions } from './config/logger.config';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { CodeModule } from './code/code.module';
 import { OperatorModule } from './operator/operator.module';
+import { join } from 'path';
+import { readFileSync, existsSync } from 'fs';
 
 @Module({
   imports: [
@@ -32,9 +34,24 @@ import { OperatorModule } from './operator/operator.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        const pubKeyPath =
+          configService.get<string>('JWT_PUBLIC_KEY_PATH') ||
+          join(process.cwd(), 'config', 'cert', 'jwt_public_key.pem');
+        const privKeyPath =
+          configService.get<string>('JWT_PRIVATE_KEY_PATH') ||
+          join(process.cwd(), 'config', 'cert', 'jwt_private_key.pem');
+
+        if (!existsSync(pubKeyPath) || !existsSync(privKeyPath)) {
+          throw new Error(
+            `Missing JWT key file: ${
+              !existsSync(pubKeyPath) ? pubKeyPath : privKeyPath
+            }`,
+          );
+        }
+
         const options: JwtModuleOptions = {
-          publicKey: '../config/cert/jwt_public_key.pem',
-          privateKey: '../config/cert/jwt_private_key.pem',
+          publicKey: readFileSync(pubKeyPath),
+          privateKey: readFileSync(privKeyPath),
           signOptions: {
             expiresIn: configService.get<string>('JWT_EXPIRES'),
             algorithm: 'RS256',
