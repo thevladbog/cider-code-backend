@@ -35,10 +35,10 @@ import { readFileSync, existsSync } from 'fs';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const pubKeyPath =
-          configService.get<string>('JWT_PUBLIC_KEY_PATH') ||
+          configService.get<string>('JWT_PUBLIC_KEY_PATH') ??
           join(process.cwd(), 'config', 'cert', 'jwt_public_key.pem');
         const privKeyPath =
-          configService.get<string>('JWT_PRIVATE_KEY_PATH') ||
+          configService.get<string>('JWT_PRIVATE_KEY_PATH') ??
           join(process.cwd(), 'config', 'cert', 'jwt_private_key.pem');
 
         if (!existsSync(pubKeyPath) || !existsSync(privKeyPath)) {
