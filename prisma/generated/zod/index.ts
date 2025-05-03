@@ -140,7 +140,7 @@ export const ShiftSchema = z.object({
   factCount: z.number().int().nullable(),
   packing: z.boolean(),
   countInBox: z.number().int().nullable(),
-  operatorId: z.string(),
+  operatorId: z.string().nullable(),
   created: z.coerce.date(),
   modified: z.coerce.date().nullable(),
 })
@@ -700,13 +700,13 @@ export const ShiftWhereInputSchema: z.ZodType<Prisma.ShiftWhereInput> = z.object
   packing: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   countInBox: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumShiftStatusFilterSchema),z.lazy(() => ShiftStatusSchema) ]).optional(),
-  operatorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  operatorId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   modified: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   product: z.union([ z.lazy(() => ProductScalarRelationFilterSchema),z.lazy(() => ProductWhereInputSchema) ]).optional(),
   BoxesCode: z.lazy(() => BoxesCodeListRelationFilterSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeListRelationFilterSchema).optional(),
-  operator: z.union([ z.lazy(() => OperatorScalarRelationFilterSchema),z.lazy(() => OperatorWhereInputSchema) ]).optional(),
+  operator: z.union([ z.lazy(() => OperatorNullableScalarRelationFilterSchema),z.lazy(() => OperatorWhereInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const ShiftOrderByWithRelationInputSchema: z.ZodType<Prisma.ShiftOrderByWithRelationInput> = z.object({
@@ -718,7 +718,7 @@ export const ShiftOrderByWithRelationInputSchema: z.ZodType<Prisma.ShiftOrderByW
   packing: z.lazy(() => SortOrderSchema).optional(),
   countInBox: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
-  operatorId: z.lazy(() => SortOrderSchema).optional(),
+  operatorId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created: z.lazy(() => SortOrderSchema).optional(),
   modified: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   product: z.lazy(() => ProductOrderByWithRelationInputSchema).optional(),
@@ -742,13 +742,13 @@ export const ShiftWhereUniqueInputSchema: z.ZodType<Prisma.ShiftWhereUniqueInput
   packing: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   countInBox: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumShiftStatusFilterSchema),z.lazy(() => ShiftStatusSchema) ]).optional(),
-  operatorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  operatorId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   modified: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   product: z.union([ z.lazy(() => ProductScalarRelationFilterSchema),z.lazy(() => ProductWhereInputSchema) ]).optional(),
   BoxesCode: z.lazy(() => BoxesCodeListRelationFilterSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeListRelationFilterSchema).optional(),
-  operator: z.union([ z.lazy(() => OperatorScalarRelationFilterSchema),z.lazy(() => OperatorWhereInputSchema) ]).optional(),
+  operator: z.union([ z.lazy(() => OperatorNullableScalarRelationFilterSchema),z.lazy(() => OperatorWhereInputSchema) ]).optional().nullable(),
 }).strict());
 
 export const ShiftOrderByWithAggregationInputSchema: z.ZodType<Prisma.ShiftOrderByWithAggregationInput> = z.object({
@@ -760,7 +760,7 @@ export const ShiftOrderByWithAggregationInputSchema: z.ZodType<Prisma.ShiftOrder
   packing: z.lazy(() => SortOrderSchema).optional(),
   countInBox: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
-  operatorId: z.lazy(() => SortOrderSchema).optional(),
+  operatorId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   created: z.lazy(() => SortOrderSchema).optional(),
   modified: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   _count: z.lazy(() => ShiftCountOrderByAggregateInputSchema).optional(),
@@ -782,7 +782,7 @@ export const ShiftScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ShiftSc
   packing: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   countInBox: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumShiftStatusWithAggregatesFilterSchema),z.lazy(() => ShiftStatusSchema) ]).optional(),
-  operatorId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  operatorId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   created: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   modified: z.union([ z.lazy(() => DateTimeNullableWithAggregatesFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
@@ -1238,7 +1238,7 @@ export const ShiftCreateInputSchema: z.ZodType<Prisma.ShiftCreateInput> = z.obje
   product: z.lazy(() => ProductCreateNestedOneWithoutShiftInputSchema),
   BoxesCode: z.lazy(() => BoxesCodeCreateNestedManyWithoutShiftInputSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeCreateNestedManyWithoutShiftInputSchema).optional(),
-  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema)
+  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedCreateInputSchema: z.ZodType<Prisma.ShiftUncheckedCreateInput> = z.object({
@@ -1250,7 +1250,7 @@ export const ShiftUncheckedCreateInputSchema: z.ZodType<Prisma.ShiftUncheckedCre
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedCreateNestedManyWithoutShiftInputSchema).optional(),
@@ -1270,7 +1270,7 @@ export const ShiftUpdateInputSchema: z.ZodType<Prisma.ShiftUpdateInput> = z.obje
   product: z.lazy(() => ProductUpdateOneRequiredWithoutShiftNestedInputSchema).optional(),
   BoxesCode: z.lazy(() => BoxesCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
-  operator: z.lazy(() => OperatorUpdateOneRequiredWithoutShiftNestedInputSchema).optional()
+  operator: z.lazy(() => OperatorUpdateOneWithoutShiftNestedInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedUpdateInputSchema: z.ZodType<Prisma.ShiftUncheckedUpdateInput> = z.object({
@@ -1282,7 +1282,7 @@ export const ShiftUncheckedUpdateInputSchema: z.ZodType<Prisma.ShiftUncheckedUpd
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedUpdateManyWithoutShiftNestedInputSchema).optional(),
@@ -1298,7 +1298,7 @@ export const ShiftCreateManyInputSchema: z.ZodType<Prisma.ShiftCreateManyInput> 
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable()
 }).strict();
@@ -1324,7 +1324,7 @@ export const ShiftUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ShiftUnchecke
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -1930,9 +1930,9 @@ export const EnumShiftStatusFilterSchema: z.ZodType<Prisma.EnumShiftStatusFilter
   not: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => NestedEnumShiftStatusFilterSchema) ]).optional(),
 }).strict();
 
-export const OperatorScalarRelationFilterSchema: z.ZodType<Prisma.OperatorScalarRelationFilter> = z.object({
-  is: z.lazy(() => OperatorWhereInputSchema).optional(),
-  isNot: z.lazy(() => OperatorWhereInputSchema).optional()
+export const OperatorNullableScalarRelationFilterSchema: z.ZodType<Prisma.OperatorNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => OperatorWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => OperatorWhereInputSchema).optional().nullable()
 }).strict();
 
 export const ShiftCountOrderByAggregateInputSchema: z.ZodType<Prisma.ShiftCountOrderByAggregateInput> = z.object({
@@ -2452,10 +2452,12 @@ export const IndividualCodeUpdateManyWithoutShiftNestedInputSchema: z.ZodType<Pr
   deleteMany: z.union([ z.lazy(() => IndividualCodeScalarWhereInputSchema),z.lazy(() => IndividualCodeScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const OperatorUpdateOneRequiredWithoutShiftNestedInputSchema: z.ZodType<Prisma.OperatorUpdateOneRequiredWithoutShiftNestedInput> = z.object({
+export const OperatorUpdateOneWithoutShiftNestedInputSchema: z.ZodType<Prisma.OperatorUpdateOneWithoutShiftNestedInput> = z.object({
   create: z.union([ z.lazy(() => OperatorCreateWithoutShiftInputSchema),z.lazy(() => OperatorUncheckedCreateWithoutShiftInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => OperatorCreateOrConnectWithoutShiftInputSchema).optional(),
   upsert: z.lazy(() => OperatorUpsertWithoutShiftInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => OperatorWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => OperatorWhereInputSchema) ]).optional(),
   connect: z.lazy(() => OperatorWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => OperatorUpdateToOneWithWhereWithoutShiftInputSchema),z.lazy(() => OperatorUpdateWithoutShiftInputSchema),z.lazy(() => OperatorUncheckedUpdateWithoutShiftInputSchema) ]).optional(),
 }).strict();
@@ -2881,7 +2883,7 @@ export const ShiftCreateWithoutProductInputSchema: z.ZodType<Prisma.ShiftCreateW
   modified: z.coerce.date().optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeCreateNestedManyWithoutShiftInputSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeCreateNestedManyWithoutShiftInputSchema).optional(),
-  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema)
+  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedCreateWithoutProductInputSchema: z.ZodType<Prisma.ShiftUncheckedCreateWithoutProductInput> = z.object({
@@ -2892,7 +2894,7 @@ export const ShiftUncheckedCreateWithoutProductInputSchema: z.ZodType<Prisma.Shi
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedCreateNestedManyWithoutShiftInputSchema).optional(),
@@ -2997,7 +2999,7 @@ export const ShiftScalarWhereInputSchema: z.ZodType<Prisma.ShiftScalarWhereInput
   packing: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   countInBox: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
   status: z.union([ z.lazy(() => EnumShiftStatusFilterSchema),z.lazy(() => ShiftStatusSchema) ]).optional(),
-  operatorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  operatorId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   created: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   modified: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
 }).strict();
@@ -3077,7 +3079,7 @@ export const ShiftCreateWithoutIndividualCodeInputSchema: z.ZodType<Prisma.Shift
   modified: z.coerce.date().optional().nullable(),
   product: z.lazy(() => ProductCreateNestedOneWithoutShiftInputSchema),
   BoxesCode: z.lazy(() => BoxesCodeCreateNestedManyWithoutShiftInputSchema).optional(),
-  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema)
+  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedCreateWithoutIndividualCodeInputSchema: z.ZodType<Prisma.ShiftUncheckedCreateWithoutIndividualCodeInput> = z.object({
@@ -3089,7 +3091,7 @@ export const ShiftUncheckedCreateWithoutIndividualCodeInputSchema: z.ZodType<Pri
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedCreateNestedManyWithoutShiftInputSchema).optional()
@@ -3198,7 +3200,7 @@ export const ShiftUpdateWithoutIndividualCodeInputSchema: z.ZodType<Prisma.Shift
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   product: z.lazy(() => ProductUpdateOneRequiredWithoutShiftNestedInputSchema).optional(),
   BoxesCode: z.lazy(() => BoxesCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
-  operator: z.lazy(() => OperatorUpdateOneRequiredWithoutShiftNestedInputSchema).optional()
+  operator: z.lazy(() => OperatorUpdateOneWithoutShiftNestedInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedUpdateWithoutIndividualCodeInputSchema: z.ZodType<Prisma.ShiftUncheckedUpdateWithoutIndividualCodeInput> = z.object({
@@ -3210,7 +3212,7 @@ export const ShiftUncheckedUpdateWithoutIndividualCodeInputSchema: z.ZodType<Pri
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedUpdateManyWithoutShiftNestedInputSchema).optional()
@@ -3294,7 +3296,7 @@ export const ShiftCreateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.ShiftCreat
   modified: z.coerce.date().optional().nullable(),
   product: z.lazy(() => ProductCreateNestedOneWithoutShiftInputSchema),
   IndividualCode: z.lazy(() => IndividualCodeCreateNestedManyWithoutShiftInputSchema).optional(),
-  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema)
+  operator: z.lazy(() => OperatorCreateNestedOneWithoutShiftInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedCreateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.ShiftUncheckedCreateWithoutBoxesCodeInput> = z.object({
@@ -3306,7 +3308,7 @@ export const ShiftUncheckedCreateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.S
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable(),
   IndividualCode: z.lazy(() => IndividualCodeUncheckedCreateNestedManyWithoutShiftInputSchema).optional()
@@ -3399,7 +3401,7 @@ export const ShiftUpdateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.ShiftUpdat
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   product: z.lazy(() => ProductUpdateOneRequiredWithoutShiftNestedInputSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
-  operator: z.lazy(() => OperatorUpdateOneRequiredWithoutShiftNestedInputSchema).optional()
+  operator: z.lazy(() => OperatorUpdateOneWithoutShiftNestedInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedUpdateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.ShiftUncheckedUpdateWithoutBoxesCodeInput> = z.object({
@@ -3411,7 +3413,7 @@ export const ShiftUncheckedUpdateWithoutBoxesCodeInputSchema: z.ZodType<Prisma.S
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   IndividualCode: z.lazy(() => IndividualCodeUncheckedUpdateManyWithoutShiftNestedInputSchema).optional()
@@ -3721,7 +3723,7 @@ export const ShiftCreateManyProductInputSchema: z.ZodType<Prisma.ShiftCreateMany
   packing: z.boolean().optional(),
   countInBox: z.number().int().optional().nullable(),
   status: z.lazy(() => ShiftStatusSchema).optional(),
-  operatorId: z.string(),
+  operatorId: z.string().optional().nullable(),
   created: z.coerce.date().optional(),
   modified: z.coerce.date().optional().nullable()
 }).strict();
@@ -3798,7 +3800,7 @@ export const ShiftUpdateWithoutProductInputSchema: z.ZodType<Prisma.ShiftUpdateW
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
   IndividualCode: z.lazy(() => IndividualCodeUpdateManyWithoutShiftNestedInputSchema).optional(),
-  operator: z.lazy(() => OperatorUpdateOneRequiredWithoutShiftNestedInputSchema).optional()
+  operator: z.lazy(() => OperatorUpdateOneWithoutShiftNestedInputSchema).optional()
 }).strict();
 
 export const ShiftUncheckedUpdateWithoutProductInputSchema: z.ZodType<Prisma.ShiftUncheckedUpdateWithoutProductInput> = z.object({
@@ -3809,7 +3811,7 @@ export const ShiftUncheckedUpdateWithoutProductInputSchema: z.ZodType<Prisma.Shi
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   BoxesCode: z.lazy(() => BoxesCodeUncheckedUpdateManyWithoutShiftNestedInputSchema).optional(),
@@ -3824,7 +3826,7 @@ export const ShiftUncheckedUpdateManyWithoutProductInputSchema: z.ZodType<Prisma
   packing: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   countInBox: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => ShiftStatusSchema),z.lazy(() => EnumShiftStatusFieldUpdateOperationsInputSchema) ]).optional(),
-  operatorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  operatorId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   created: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   modified: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();

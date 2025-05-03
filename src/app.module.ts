@@ -18,6 +18,7 @@ import { CodeModule } from './code/code.module';
 import { OperatorModule } from './operator/operator.module';
 import { join } from 'path';
 import { readFileSync, existsSync } from 'fs';
+import { ShiftModule } from './shift/shift.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { readFileSync, existsSync } from 'fs';
     }),
     CodeModule,
     OperatorModule,
+    ShiftModule,
   ],
   controllers: [],
   providers: [

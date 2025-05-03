@@ -112,11 +112,26 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<CreatedUserDto> {
+    const currentData = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
     if (updateUserDto.password) {
-      const hashedPassword = await this.hashPassword(
-        String(updateUserDto.password),
+      const checkedPassword = await this.comparePasswords(
+        currentData?.password ?? '',
+        updateUserDto.password,
       );
-      updateUserDto.password = hashedPassword;
+
+      if (checkedPassword) {
+        const hashedPassword = await this.hashPassword(
+          String(updateUserDto.password),
+        );
+        updateUserDto.password = hashedPassword;
+      } else {
+        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      }
     }
 
     try {
@@ -212,15 +227,13 @@ export class UserService {
     return result;
   }
 
-  hashPasswordInObject<T>(object: T): T {
-    return {
-      ...object,
-      password: 'hashed_password',
-    };
+  hashPasswordInObject(object: CreatedUserDto): CreatedUserDto {
+    delete object.password;
+
+    return object;
   }
 
   async getJwtToken(id: string) {
-    console.log(__dirname);
     const token = await this.jwtService.signAsync(
       {},
       {

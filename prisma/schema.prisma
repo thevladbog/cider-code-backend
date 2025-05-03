@@ -83,8 +83,8 @@ model Shift {
   status         ShiftStatus      @default(PLANNED)
   BoxesCode      BoxesCode[]
   IndividualCode IndividualCode[]
-  operator       Operator         @relation(fields: [operatorId], references: [id])
-  operatorId     String
+  operator       Operator?        @relation(fields: [operatorId], references: [id])
+  operatorId     String?
 
   created  DateTime  @default(now()) @map("created_at")
   modified DateTime? @updatedAt @map("updated_at")
