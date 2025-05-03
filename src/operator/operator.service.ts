@@ -116,7 +116,6 @@ export class OperatorService {
   }
 
   async getOne(id: string | undefined): Promise<IOperatorFindOne> {
-    console.log({ id });
     const data = await this.prisma.operator.findUniqueOrThrow({
       where: {
         id,

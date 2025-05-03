@@ -25,7 +25,8 @@
     "prisma:studio": "npx prisma studio",
     "prisma:seed": "npx prisma db seed",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org v-b --project bottle-code-backend ./dist && sentry-cli --url https://sentry.v-b.tech sourcemaps upload --org v-b --project bottle-code-backend ./dist",
-    "cert:create:local": "mkcert -key-file ./src/config/cert/key.pem -cert-file ./src/config/cert/cert.pem api.test.in.bottlecode.app"
+    "cert:create:local": "mkcert -key-file ./src/config/cert/key.pem -cert-file ./src/config/cert/cert.pem $LOCAL",
+    "cert:create:jwt": "openssl genpkey -algorithm RSA -out ./config/cert/jwt_private_key.pem -pkeyopt rsa_keygen_bits:2048 && openssl rsa -pubout -in ./config/cert/jwt_private_key.pem -out ./config/cert/jwt_public_key.pem"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.17",
