@@ -40,7 +40,7 @@ export const ShiftSchema = z.object({
 
 export class ShiftDto extends createZodDto(ShiftSchema) {}
 
-export class IShiftFindMay {
+export class IShiftFindMany {
   result: ShiftDto[];
   total: number;
   page: number;

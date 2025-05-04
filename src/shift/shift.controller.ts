@@ -17,7 +17,7 @@ import { ShiftService } from './shift.service';
 import {
   CreateShiftDto,
   IDeletedShift,
-  IShiftFindMay,
+  IShiftFindMany,
   IShiftFindOne,
   ShiftDto,
 } from './dto/create-shift.dto';
@@ -51,7 +51,7 @@ export class ShiftController {
   @ApiResponse({
     status: 200,
     description: 'Returns a list of shifts',
-    type: IShiftFindMay,
+    type: IShiftFindMany,
   })
   @ApiQuery({
     name: 'page',
@@ -71,7 +71,7 @@ export class ShiftController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-  ): Promise<IShiftFindMay> {
+  ): Promise<IShiftFindMany> {
     return await this.shiftService.findAll(page, limit);
   }
 

@@ -20,7 +20,7 @@ import { UserService } from './user.service';
 import {
   CreatedUserDto,
   CreateUserDto,
-  IUserFindMay,
+  IUserFindMany,
   IUserFindOne,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -64,7 +64,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns a list of users',
-    type: IUserFindMay,
+    type: IUserFindMany,
   })
   @ApiQuery({
     name: 'page',
@@ -84,7 +84,7 @@ export class UserController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-  ): Promise<IUserFindMay> {
+  ): Promise<IUserFindMany> {
     return await this.userService.findAll(page, limit);
   }
 
@@ -144,8 +144,9 @@ export class UserController {
 
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true, //process.env.NODE_ENV === 'production',
       maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
+      sameSite: 'none',
     });
 
     res.send({ user: user });
@@ -165,7 +166,7 @@ export class UserController {
 
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
-  @Get('/me')
+  @Get('auth/me')
   async getMe(@Req() req: Request): Promise<IUserFindOne> {
     const userId = req?.user?.sub;
     if (!userId) {

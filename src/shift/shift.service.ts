@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreateShiftDto,
   IDeletedShift,
-  IShiftFindMay,
+  IShiftFindMany,
   IShiftFindOne,
   ShiftDto,
 } from './dto/create-shift.dto';
@@ -38,7 +38,7 @@ export class ShiftService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<IShiftFindMay> {
+  async findAll(page: number, limit: number): Promise<IShiftFindMany> {
     const raw = await this.prismaService.$transaction([
       this.prismaService.shift.count(),
       this.prismaService.shift.findMany({

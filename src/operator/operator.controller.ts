@@ -20,7 +20,7 @@ import { OperatorService } from './operator.service';
 import {
   CreateOperatorDto,
   CreatedOperatorDto,
-  IOperatorFindMay,
+  IOperatorFindMany,
   IOperatorFindOne,
 } from './dto/create-operator.dto';
 import { UpdateOperatorDto } from './dto/update-operator.dto';
@@ -98,7 +98,7 @@ export class OperatorController {
   @ApiResponse({
     status: 200,
     description: 'Returns a list of users',
-    type: IOperatorFindMay,
+    type: IOperatorFindMany,
   })
   @ApiQuery({
     name: 'page',
@@ -118,7 +118,7 @@ export class OperatorController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-  ): Promise<IOperatorFindMay> {
+  ): Promise<IOperatorFindMany> {
     return await this.operatorService.getAll(page, limit);
   }
 
