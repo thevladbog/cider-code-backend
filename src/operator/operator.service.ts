@@ -4,7 +4,7 @@ import { customAlphabet } from 'nanoid';
 import {
   CreateOperatorDto,
   CreatedOperatorDto,
-  IOperatorFindMay,
+  IOperatorFindMany,
   IOperatorFindOne,
 } from './dto/create-operator.dto';
 import { UpdateOperatorDto } from './dto/update-operator.dto';
@@ -90,7 +90,7 @@ export class OperatorService {
     }
   }
 
-  async getAll(page: number, limit: number): Promise<IOperatorFindMay> {
+  async getAll(page: number, limit: number): Promise<IOperatorFindMany> {
     try {
       const raw = await this.prisma.$transaction([
         this.prisma.operator.count(),

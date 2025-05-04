@@ -71,6 +71,11 @@ async function bootstrap() {
     console.log(event);
   });
 
+  app.enableCors({
+    origin: ['https://test.in.bottlecode.app:3000'],
+    credentials: true,
+  });
+
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3033);
 }

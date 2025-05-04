@@ -18,7 +18,7 @@ export const CreatedOperatorSchema = z.object({
 
 export class CreatedOperatorDto extends createZodDto(CreatedOperatorSchema) {}
 
-export class IOperatorFindMay {
+export class IOperatorFindMany {
   result: CreatedOperatorDto[];
   total: number;
   page: number;

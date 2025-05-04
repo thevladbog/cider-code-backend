@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreatedProductId, CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'nestjs-prisma';
-import { IProductFindMay, SelectProductDto } from './dto/select-product.dto';
+import { IProductFindMany, SelectProductDto } from './dto/select-product.dto';
 import { ProductStatusType } from '../../prisma/generated/zod';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ProductService {
     });
   }
 
-  async findAll(page: number, limit: number): Promise<IProductFindMay> {
+  async findAll(page: number, limit: number): Promise<IProductFindMany> {
     const raw = await this.prismaService.$transaction([
       this.prismaService.product.count(),
       this.prismaService.product.findMany({

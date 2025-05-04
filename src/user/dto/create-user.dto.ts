@@ -16,7 +16,7 @@ export const UserSchema = z.object({
 
 export class CreatedUserDto extends createZodDto(UserSchema) {}
 
-export class IUserFindMay {
+export class IUserFindMany {
   result: CreatedUserDto[];
   total: number;
   page: number;

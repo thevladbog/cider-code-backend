@@ -19,7 +19,7 @@ import {
 } from './dto/update-product.dto';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { IProductFindMay, SelectProductDto } from './dto/select-product.dto';
+import { IProductFindMany, SelectProductDto } from './dto/select-product.dto';
 
 @ApiTags('Product')
 @Controller('product')
@@ -47,7 +47,7 @@ export class ProductController {
   @Get()
   @ApiResponse({
     status: 200,
-    type: IProductFindMay,
+    type: IProductFindMany,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiQuery({
@@ -65,7 +65,7 @@ export class ProductController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-  ): Promise<IProductFindMay> {
+  ): Promise<IProductFindMany> {
     return this.productService.findAll(page, limit);
   }
 

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreatedUserDto,
   CreateUserDto,
-  IUserFindMay,
+  IUserFindMany,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'nestjs-prisma';
@@ -61,7 +61,7 @@ export class UserService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<IUserFindMay> {
+  async findAll(page: number, limit: number): Promise<IUserFindMany> {
     const raw = await this.prismaService.$transaction([
       this.prismaService.user.count(),
       this.prismaService.user.findMany({
@@ -89,6 +89,8 @@ export class UserService {
     if (!id) {
       throw new HttpException('User ID is required', HttpStatus.BAD_REQUEST);
     }
+
+    console.log({ id });
 
     const data = await this.prismaService.user.findUniqueOrThrow({
       where: {
