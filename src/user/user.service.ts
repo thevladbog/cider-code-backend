@@ -229,13 +229,6 @@ export class UserService {
       },
     });
 
-    if (!user) {
-      throw new HttpException(
-        `User with email ${email} can't be found or something went wrong`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     const currentToken = await this.prismaService.emailTokens.findUnique({
       where: {
         userId: user.id,
@@ -258,7 +251,20 @@ export class UserService {
       },
     });
 
-    await this.emailService.sendResetPasswordMail(user.id, token, email);
+    try {
+      await this.emailService.sendResetPasswordMail(user.id, token, email);
+    } catch (error) {
+      await this.prismaService.emailTokens.delete({
+        where: {
+          userId: user.id,
+        },
+      });
+      this.logger.error('Failed to send reset password email', error);
+      throw new HttpException(
+        'Failed to send reset password email. Please try again later.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async resetPassword({
@@ -281,17 +287,19 @@ export class UserService {
 
     try {
       const hashedPassword = await this.hashPassword(password);
-      await this.prismaService.user.update({
-        where: { id: userId },
-        data: {
-          password: hashedPassword,
-        },
-      });
+      await this.prismaService.$transaction(async (prisma) => {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            password: hashedPassword,
+          },
+        });
 
-      await this.prismaService.emailTokens.delete({
-        where: {
-          userId,
-        },
+        await prisma.emailTokens.delete({
+          where: {
+            userId,
+          },
+        });
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
