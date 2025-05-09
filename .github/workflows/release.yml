@@ -11,7 +11,7 @@ env:
   REGISTRY: cr.yandex/${{ secrets.YCR_REGISTRY_ID }}/bottlecode-backend
 
 jobs:
-  release:
+  prepare-release-info:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_version.outputs.VERSION }}
@@ -59,7 +59,7 @@ jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
-    needs: release
+    needs: prepare-release-info
     steps:
       - uses: actions/checkout@v4
 
@@ -82,9 +82,9 @@ jobs:
         run: echo "${{ secrets.YC_OAUTH_TOKEN }}" | docker login --username oauth --password-stdin cr.yandex
 
       - name: Build & push STABLE
-        if: ${{ needs.release.outputs.is_beta == 'false' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
-          TAG=${{ needs.release.outputs.version }}
+          TAG=${{ needs.prepare-release-info.outputs.version }}
           docker build \
             --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \ 
             --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
@@ -94,9 +94,9 @@ jobs:
           docker push $REGISTRY:latest
 
       - name: Build & push BETA
-        if: ${{ needs.release.outputs.is_beta == 'true' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
-          TAG=${{ needs.release.outputs.version }}
+          TAG=${{ needs.prepare-release-info.outputs.version }}
           NODE_ENV=stage
           docker build --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:beta
@@ -105,7 +105,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build-and-push, release]
+    needs: [build-and-push, prepare-release-info]
     steps:
       - uses: actions/checkout@v4
 
@@ -133,21 +133,21 @@ jobs:
           echo "VM_IP=$IP" >> $GITHUB_OUTPUT
       # Передать .env.stable, если стабильный релиз
       - name: Copy .env.stable
-        if: ${{ needs.release.outputs.is_beta == 'false' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
           echo '${{ secrets.PROD_ENV_FILE }}' > envfile
-          yc compute scp --login vladbogserg envfile $VM_IP:/opt/bottlecode-backend/.env.stable
+          cat envfile | yc compute ssh --login vladbogserg $VM_IP -- "cat > /opt/bottlecode-backend/.env.beta"
 
       # Передать .env.beta, если бета-релиз
       - name: Copy .env.beta
-        if: ${{ needs.release.outputs.is_beta == 'true' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
-          yc compute scp --login vladbogserg envfile $VM_IP:/opt/bottlecode-backend/.env.beta
+          cat envfile | yc compute ssh --login vladbogserg $VM_IP -- "cat > /opt/bottlecode-backend/.env.beta"
 
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
-        if: ${{ needs.release.outputs.is_beta == 'false' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
           yc compute ssh --login vladbogserg $VM_IP -- "
             cd /opt/bottlecode-backend &&
@@ -157,7 +157,7 @@ jobs:
           "
 
       - name: Restart app-beta (beta release)
-        if: ${{ needs.release.outputs.is_beta == 'true' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
           yc compute ssh --login vladbogserg $VM_IP -- "
             cd /opt/bottlecode-backend &&
