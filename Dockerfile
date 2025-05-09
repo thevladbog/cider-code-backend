@@ -10,10 +10,15 @@ RUN npm ci
 
 COPY . .
 
-# Генерация сертификатов (скрипт должен быть прописан в package.json)
+# Генерация сертификатов
 RUN npm run cert:create:jwt:prod
 
+# Генерация клиента Prisma
+RUN npm run prisma:generate
+
+# Билд
 RUN npm run build
+
 
 # Stage 2: Runtime
 FROM node:22.14.0-alpine3.21

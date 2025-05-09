@@ -94,6 +94,7 @@ jobs:
         if: ${{ needs.release.outputs.is_beta == 'true' }}
         run: |
           TAG=${{ needs.release.outputs.version }}
+          NODE_ENV=stage
           docker build -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:beta
           docker push $REGISTRY:$TAG
