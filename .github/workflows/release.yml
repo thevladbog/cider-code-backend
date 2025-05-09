@@ -131,7 +131,7 @@ jobs:
           IP=$(yc compute instance get --id "$VM_ID" --format json | jq -r '.network_interfaces[0].primary_v4_address.one_to_one_nat.address')
           echo "VM_IP=$IP" >> $GITHUB_ENV
           echo "VM_IP=$IP" >> $GITHUB_OUTPUT
-      # Передать .env.stable, если стабильный релиз
+      # Передать .env.stable
       - name: Copy .env.stable
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
