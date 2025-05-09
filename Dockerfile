@@ -1,24 +1,29 @@
+# Stage 1: Build
 FROM node:22.14.0-alpine3.21 AS builder
 
-# Create app directory
 WORKDIR /app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
-COPY prisma ./prisma/
-
-# Install app dependencies
-RUN npm install
+RUN npm ci
 
 COPY . .
 
+# Генерация сертификатов (скрипт должен быть прописан в package.json)
+RUN npm run cert:create:jwt
+
 RUN npm run build
 
+# Stage 2: Runtime
 FROM node:22.14.0-alpine3.21
 
-COPY --from=builder /app/node_modules ./node_modules
+WORKDIR /app
+
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/config/cert ./config/cert
+COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3033
-CMD [ "npm", "run", "start:prod" ]
+
+CMD ["node", "dist/main.js"]
