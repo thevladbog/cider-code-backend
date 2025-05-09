@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.10](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-05-09)
+
+
+### Bug Fixes
+
+* fixed command for login ([b8c5b96](https://github.com/thevladbog/cider-code-backend/commit/b8c5b960659440eefc2282d7912b2dbde0a653c7))
+
 # [1.0.0-beta.9](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-05-09)
 
 
