@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 # Генерация сертификатов (скрипт должен быть прописан в package.json)
-RUN npm run cert:create:jwt
+RUN npm run cert:create:jwt:prod
 
 RUN npm run build
 
