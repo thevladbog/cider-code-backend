@@ -95,6 +95,8 @@ jobs:
         run: |
           TAG=${{ needs.release.outputs.version }}
           NODE_ENV=stage
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           docker build -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:beta
           docker push $REGISTRY:$TAG
