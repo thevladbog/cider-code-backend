@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.5](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2025-05-09)
+
+
+### Bug Fixes
+
+* added command for generating prisma client ([07e9f14](https://github.com/thevladbog/cider-code-backend/commit/07e9f149d2bde9746f3b9bd6b9584d4d9bc8be79))
+
 # [1.0.0-beta.4](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-05-09)
 
 
