@@ -10,7 +10,7 @@ Backend for web app BOTTLE [CODE]
 
 1. Install dependencies
 
-```bash
+```sh
 npm install
 ```
 
@@ -18,20 +18,20 @@ npm install
 
 - Unix
 
-```bash
+```sh
 LOCAL='api.test.in.bottlecode.app' npm run cert:create:local
 ```
 
 - Windows
 
-```bash
+```sh
 $env:LOCAL='api.test.in.bottlecode.app'
 npm run cert:create:local
 ```
 
 3.Install jwt certificates
 
-```bash
+```sh
 npm run cert:create:jwt
 ```
 
@@ -39,18 +39,18 @@ npm run cert:create:jwt
 
 - development
 
-```bash
+```sh
 npm run start
 ```
 
 - watch mode
 
-```bash
+```sh
 npm run start:dev
 ```
 
 - production mode
 
-```bash
+```sh
 npm run start:prod
 ```
