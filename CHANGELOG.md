@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.4](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-05-09)
+
+
+### Bug Fixes
+
+* fixed command for generating JWT certs ([9d82bee](https://github.com/thevladbog/cider-code-backend/commit/9d82bee5b9994645a8942b65c8c45114541f7770))
+
 # [1.0.0-beta.3](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-05-09)
 
 
