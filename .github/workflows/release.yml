@@ -85,7 +85,10 @@ jobs:
         if: ${{ needs.release.outputs.is_beta == 'false' }}
         run: |
           TAG=${{ needs.release.outputs.version }}
-          docker build -t $REGISTRY:$TAG .
+          docker build \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \ 
+            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:latest
           docker push $REGISTRY:$TAG
           docker push $REGISTRY:latest
@@ -95,9 +98,10 @@ jobs:
         run: |
           TAG=${{ needs.release.outputs.version }}
           NODE_ENV=stage
-          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
-          docker build -t $REGISTRY:$TAG .
+          docker build \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \ 
+            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:beta
           docker push $REGISTRY:$TAG
           docker push $REGISTRY:beta

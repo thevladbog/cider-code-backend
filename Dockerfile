@@ -5,6 +5,12 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
+ARG SENTRY_DSN
+ENV SENTRY_DSN=${SENTRY_DSN}
+
 COPY package*.json ./
 RUN npm ci
 
