@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.7](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2025-05-09)
+
+
+### Bug Fixes
+
+* fixed env for sentry ([860ceb5](https://github.com/thevladbog/cider-code-backend/commit/860ceb519532c2d95c292769d436b976992f36ab))
+
 # [1.0.0-beta.6](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2025-05-09)
 
 
