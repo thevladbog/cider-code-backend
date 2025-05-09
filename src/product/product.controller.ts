@@ -62,6 +62,7 @@ export class ProductController {
     type: Number,
     description: 'Items per page',
   })
+  @UsePipes(ZodValidationPipe)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
@@ -88,6 +89,7 @@ export class ProductController {
     type: UpdateProductDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UsePipes(ZodValidationPipe)
   @Patch(':id')
   async update(
     @Param('id') id: string,

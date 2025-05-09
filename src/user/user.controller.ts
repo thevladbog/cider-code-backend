@@ -15,6 +15,7 @@ import {
   UseGuards,
   Req,
   BadRequestException,
+  UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -30,6 +31,11 @@ import { Request, Response } from 'express';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { JwtType } from 'src/guards/auth/jwt.metadata';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
+import { ZodValidationPipe } from 'nestjs-zod';
+import {
+  ResetPasswordDto,
+  ResetPasswordRequestDto,
+} from './dto/reset-password.dto';
 
 @Controller('user')
 export class UserController {
@@ -44,6 +50,7 @@ export class UserController {
     status: 400,
     description: "Data isn't unique",
   })
+  @UsePipes(ZodValidationPipe)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
@@ -111,6 +118,7 @@ export class UserController {
   })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
+  @UsePipes(ZodValidationPipe)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -134,6 +142,7 @@ export class UserController {
   }
 
   @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidationPipe)
   @Post('auth/sign-in')
   async signIn(
     @Body() credentials: SignInDto,
@@ -150,6 +159,28 @@ export class UserController {
     });
 
     res.send({ user: user });
+  }
+
+  @ApiResponse({
+    status: 404,
+    description: "User can't be found or something went wrong",
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidationPipe)
+  @Post('auth/reset-password-request')
+  async resetRequest(@Body() body: ResetPasswordRequestDto) {
+    await this.userService.getResetRequest(body.email);
+  }
+
+  @ApiResponse({
+    status: 404,
+    description: 'Something went wrong',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidationPipe)
+  @Post('auth/reset-password')
+  async resetPasswordAfterRequest(@Body() body: ResetPasswordDto) {
+    await this.userService.resetPassword(body);
   }
 
   @JwtType(JWT_TYPE.Common)

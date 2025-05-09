@@ -13,12 +13,15 @@ import { SignInDto } from './dto/sign-in.dto';
 import { nanoid } from 'nanoid';
 import { readFileSync } from 'fs';
 import * as path from 'path';
+import { MailService } from 'src/mail/mail.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly emailService: MailService,
   ) {}
   private readonly logger = new Logger(UserService.name);
   private readonly privateKey = readFileSync(
@@ -217,6 +220,104 @@ export class UserService {
 
   async getById(id: string) {
     return await this.prismaService.user.findUniqueOrThrow({ where: { id } });
+  }
+
+  async getResetRequest(email: string): Promise<void> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: {
+        email,
+      },
+    });
+
+    const currentToken = await this.prismaService.emailTokens.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    if (currentToken) {
+      await this.prismaService.emailTokens.delete({
+        where: {
+          userId: user.id,
+        },
+      });
+    }
+
+    const token = nanoid(64);
+    await this.prismaService.emailTokens.create({
+      data: {
+        userId: user.id,
+        token,
+      },
+    });
+
+    try {
+      await this.emailService.sendResetPasswordMail(user.id, token, email);
+    } catch (error) {
+      await this.prismaService.emailTokens.delete({
+        where: {
+          userId: user.id,
+        },
+      });
+      this.logger.error('Failed to send reset password email', error);
+      throw new HttpException(
+        'Failed to send reset password email. Please try again later.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async resetPassword({
+    userId,
+    token,
+    password,
+  }: ResetPasswordDto): Promise<void> {
+    const storedToken = await this.prismaService.emailTokens.findUniqueOrThrow({
+      where: {
+        userId,
+      },
+    });
+
+    if (storedToken.token !== token) {
+      throw new HttpException(
+        `Token can't be found or something went wrong`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    try {
+      const hashedPassword = await this.hashPassword(password);
+      await this.prismaService.$transaction(async (prisma) => {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            password: hashedPassword,
+          },
+        });
+
+        await prisma.emailTokens.delete({
+          where: {
+            userId,
+          },
+        });
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          this.logger.error(
+            `Password can't be changed for User with id ${userId}`,
+            error,
+          );
+          throw new HttpException(
+            `Password can't be changed for User with id ${userId}`,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+
+      this.logger.error('Something went wrong', error);
+      throw error;
+    }
   }
 
   async hashPassword(password: string): Promise<string> {

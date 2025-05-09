@@ -19,6 +19,7 @@ import { OperatorModule } from './operator/operator.module';
 import { join } from 'path';
 import { readFileSync, existsSync } from 'fs';
 import { ShiftModule } from './shift/shift.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ShiftModule } from './shift/shift.module';
     CodeModule,
     OperatorModule,
     ShiftModule,
+    MailModule,
   ],
   controllers: [],
   providers: [
