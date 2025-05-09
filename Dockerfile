@@ -3,6 +3,8 @@ FROM node:22.14.0-alpine3.21 AS builder
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 RUN npm ci
 
