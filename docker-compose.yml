@@ -31,7 +31,7 @@ services:
       - proxy
 
   app-beta:
-    image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest # тег образа для beta
+    image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:beta
     depends_on:
       - postgres
     env_file:

@@ -18,11 +18,11 @@ FROM node:22.14.0-alpine3.21
 
 WORKDIR /app
 
-COPY --from=build /app/package*.json ./
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/config/cert ./config/cert
-COPY --from=build /app/prisma ./prisma
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/config/cert ./config/cert
+COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3033
 

@@ -5,11 +5,11 @@
       "prerelease": false
     },
     {
-      "name": "release:stable",
+      "name": "release-stable",
       "prerelease": false
     },
     {
-      "name": "release:beta",
+      "name": "release-beta",
       "prerelease": "beta"
     }
   ],

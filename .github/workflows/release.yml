@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - 'release'
-      - 'release:stable'
-      - 'release:beta'
+      - 'release-stable'
+      - 'release-beta'
 
 env:
-  REGISTRY: cr.yandex/${{ secrets.YCR_REGISTRY_ID }}/nest-app
+  REGISTRY: cr.yandex/${{ secrets.YCR_REGISTRY_ID }}/bottlecode-backend
 
 jobs:
   release:
@@ -51,7 +51,7 @@ jobs:
       - name: Is Beta?
         id: set_is_beta
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/release:beta" ]] || [[ "${{ steps.get_version.outputs.VERSION }}" == *beta* ]]; then
+          if [[ "${{ github.ref }}" == "refs/heads/release-beta" ]] || [[ "${{ steps.get_version.outputs.VERSION }}" == *beta* ]]; then
             echo "BETA=true" >> $GITHUB_OUTPUT
           else
             echo "BETA=false" >> $GITHUB_OUTPUT
