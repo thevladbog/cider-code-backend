@@ -1,29 +1,78 @@
-version: '3.8'
-services:
-  nest-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: nest-api
-    restart: always
-    ports:
-      - '3000:3000'
-    depends_on:
-      - nest-postgres
-    env_file:
-      - .env
+version: '3.9'
 
-  nest-postgres:
-    image: postgres:17
-    container_name: nest-postgres
-    restart: always
-    ports:
-      - '5432:5432'
-    env_file:
-      - .env
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - nest-postgres:/var/lib/postgresql/data
+      - /opt/pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  app-stable:
+    image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
+    depends_on:
+      - postgres
+    env_file:
+      - .env.stable
+    expose:
+      - '3033'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.nest.rule=Host(`api.bottlecode.app`)'
+      - 'traefik.http.routers.nest.entrypoints=websecure'
+      - 'traefik.http.routers.nest.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.nest.loadbalancer.server.port=3033'
+    networks:
+      - backend
+      - proxy
+
+  app-beta:
+    image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest # тег образа для beta
+    depends_on:
+      - postgres
+    env_file:
+      - .env.beta
+    networks:
+      - backend
+      - proxy
+    expose:
+      - '3035'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.app-beta.rule=Host(`beta.api.bottlecode.app`)'
+      - 'traefik.http.routers.app-beta.entrypoints=websecure'
+      - 'traefik.http.routers.app-beta.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.app-beta.loadbalancer.server.port=3035'
+
+  traefik:
+    image: traefik:v2.11
+    command:
+      - '--api.insecure=false'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecpde.app'
+      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+      - '--log.level=INFO'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - proxy
+
+networks:
+  backend:
+  proxy:
 
 volumes:
-  nest-postgres:
-    name: nest-postgres-db
+  traefik_letsencrypt:
