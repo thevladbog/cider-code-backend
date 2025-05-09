@@ -22,10 +22,10 @@ services:
       - '3033'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.nest.rule=Host(`api.bottlecode.app`)'
-      - 'traefik.http.routers.nest.entrypoints=websecure'
-      - 'traefik.http.routers.nest.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.nest.loadbalancer.server.port=3033'
+      - 'traefik.http.routers.app-stable.rule=Host(`api.bottlecode.app`)'
+      - 'traefik.http.routers.app-stable.entrypoints=websecure'
+      - 'traefik.http.routers.app-stable.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.app-stable.loadbalancer.server.port=3033'
     networks:
       - backend
       - proxy
@@ -57,7 +57,7 @@ services:
       - '--entrypoints.websecure.address=:443'
       - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
       - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
-      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecpde.app'
+      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecode.app'
       - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
       - '--log.level=INFO'
     ports:
