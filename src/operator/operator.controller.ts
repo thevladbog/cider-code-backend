@@ -15,6 +15,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { OperatorService } from './operator.service';
 import {
@@ -30,6 +31,7 @@ import { JWT_TYPE } from 'src/constants/jwt.constants';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { Response, Request } from 'express';
 import { LoginOperatorDto } from './dto/login-operator.dto';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('operator')
 export class OperatorController {
@@ -42,6 +44,7 @@ export class OperatorController {
   })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
+  @UsePipes(ZodValidationPipe)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createOperator(
@@ -54,6 +57,7 @@ export class OperatorController {
   @ApiResponse({ status: 404, description: 'Operator not found' })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
+  @UsePipes(ZodValidationPipe)
   @Patch(':id')
   async updateOperator(
     @Param('id') id: string,
@@ -77,6 +81,7 @@ export class OperatorController {
     type: Boolean,
   })
   @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidationPipe)
   @Post('/login')
   async login(
     @Body() loginOperatorDto: LoginOperatorDto,

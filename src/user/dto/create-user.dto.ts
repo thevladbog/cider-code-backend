@@ -1,6 +1,15 @@
 import { createZodDto } from 'nestjs-zod';
-import { UserCreateInputSchema } from 'prisma/generated/zod';
 import { z } from 'zod';
+
+export const UserCreateInputSchema = z
+  .object({
+    email: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    password: z.string(),
+    picture: z.string().optional(),
+  })
+  .strict();
 
 export class CreateUserDto extends createZodDto(UserCreateInputSchema) {}
 
@@ -10,6 +19,7 @@ export const UserSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   password: z.string().optional(),
+  picture: z.string().optional().nullable(),
   created: z.coerce.date(),
   modified: z.coerce.date().nullable(),
 });

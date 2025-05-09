@@ -12,6 +12,7 @@ import {
   Query,
   ParseIntPipe,
   DefaultValuePipe,
+  UsePipes,
 } from '@nestjs/common';
 import { ShiftService } from './shift.service';
 import {
@@ -26,6 +27,7 @@ import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtType } from 'src/guards/auth/jwt.metadata';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Controller('shift')
 export class ShiftController {
@@ -42,6 +44,7 @@ export class ShiftController {
   })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
+  @UsePipes(ZodValidationPipe)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createShiftDto: CreateShiftDto): Promise<ShiftDto> {
@@ -87,7 +90,6 @@ export class ShiftController {
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get(':id')
-  @Get(':id')
   async findOne(@Param('id') id: string): Promise<IShiftFindOne> {
     return await this.shiftService.findOne(id);
   }
@@ -98,6 +100,7 @@ export class ShiftController {
   })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
+  @UsePipes(ZodValidationPipe)
   @Patch(':id')
   async update(
     @Param('id') id: string,
