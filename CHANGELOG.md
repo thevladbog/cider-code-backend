@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.2](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-05-09)
+
+
+### Bug Fixes
+
+* added installation openssl ([5997ebc](https://github.com/thevladbog/cider-code-backend/commit/5997ebcac8dde6aefd3c543fdfc9e9a2216505a3))
+
 # 1.0.0-beta.1 (2025-05-09)
 
 
