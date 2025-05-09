@@ -1,4 +1,4 @@
-name: Semantic Release & Deploy (stable+beta on one VM)
+name: Release & Deploy
 
 on:
   push:
