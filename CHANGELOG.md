@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.9](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-05-09)
+
+
+### Bug Fixes
+
+* fixed copying env ([18262aa](https://github.com/thevladbog/cider-code-backend/commit/18262aad98563936296c73b98ade998ee0946b47))
+
 # [1.0.0-beta.8](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2025-05-09)
 
 
