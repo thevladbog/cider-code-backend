@@ -203,7 +203,7 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
-            sudo docker login --username iam --password-stdin '$IAM_TOKEN' cr.yandex &&
+            sudo docker login --username iam --password '$IAM_TOKEN' cr.yandex &&
             sudo docker compose pull app-beta &&
             sudo docker compose up -d app-beta &&
             sudo docker compose run --rm app-beta npx prisma migrate deploy
