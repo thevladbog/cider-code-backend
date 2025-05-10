@@ -184,6 +184,24 @@ jobs:
             sudo sh -c 'echo \"IAM_TOKEN=${IAM_TOKEN}\" >> /opt/bottlecode-backend/.env'
           "
 
+      - name: Set production NODE_ENV env
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          export NODE_ENV=production
+          yc compute ssh --id "$VM_ID" -- "
+            sudo sh -c 'echo \"NODE_ENV=${NODE_ENV}\" >> /opt/bottlecode-backend/.env'
+          "
+
+      - name: Set beta NODE_ENV env
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          export NODE_ENV=beta
+          yc compute ssh --id "$VM_ID" -- "
+            sudo sh -c 'echo \"NODE_ENV=${NODE_ENV}\" >> /opt/bottlecode-backend/.env'
+          "
+
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
