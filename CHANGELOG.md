@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.45](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.44...v1.0.0-beta.45) (2025-05-10)
+
+
+### Bug Fixes
+
+* trying another ssh ([2d88ef5](https://github.com/thevladbog/cider-code-backend/commit/2d88ef52bae3defae707897eb7da5d1cacc6dd0e))
+
 # [1.0.0-beta.44](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.43...v1.0.0-beta.44) (2025-05-10)
 
 
