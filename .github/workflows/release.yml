@@ -160,6 +160,7 @@ jobs:
       - name: Restart app-beta (beta release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
+          export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
             docker compose pull app-beta &&
