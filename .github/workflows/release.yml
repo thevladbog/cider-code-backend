@@ -143,7 +143,7 @@ jobs:
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
-          yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta" < envfile
+          cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta"
 
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
