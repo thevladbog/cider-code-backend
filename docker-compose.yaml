@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
 
   traefik:
-    image: traefik:v2.11
+    image: traefik:v3.4.0
     command:
       - '--api.insecure=true'
       - '--providers.docker=true'
