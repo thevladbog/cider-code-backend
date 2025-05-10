@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.4](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2025-05-10)
+
+
+### Bug Fixes
+
+* fixing path to cert ([d3fea07](https://github.com/thevladbog/cider-code-backend/commit/d3fea078a3e8b6a3179781b53abb2b91db09594a))
+
 # [1.0.0-beta.3](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-05-10)
 
 
