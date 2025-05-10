@@ -136,7 +136,7 @@ jobs:
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
           echo '${{ secrets.PROD_ENV_FILE }}' > envfile
-          cat envfile | yc compute ssh --id $VM_ID -- "cat > /opt/bottlecode-backend/.env.beta"
+          cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta"
 
       # Передать .env.beta
       - name: Copy .env.beta
@@ -144,13 +144,13 @@ jobs:
         run: |
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
           yc config list
-          cat envfile | yc compute ssh --id $VM_ID -- "cat > /opt/bottlecode-backend/.env.beta"
+          cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta" < envfile
 
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
-          yc compute ssh --id $VM_ID -- "
+          yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
             docker compose pull app-stable &&
             docker compose up -d app-stable &&
@@ -160,7 +160,7 @@ jobs:
       - name: Restart app-beta (beta release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
-          yc compute ssh --id $VM_ID -- "
+          yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
             docker compose pull app-beta &&
             docker compose up -d app-beta &&
