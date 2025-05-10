@@ -47,6 +47,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_letsencrypt:/letsencrypt
     networks:
+      - backend
       - proxy
     restart: unless-stopped
 
