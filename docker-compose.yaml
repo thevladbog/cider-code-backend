@@ -102,6 +102,7 @@ services:
 networks:
   backend:
   proxy:
+    external: true
 
 volumes:
   traefik_letsencrypt:
