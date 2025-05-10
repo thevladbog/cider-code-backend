@@ -39,4 +39,4 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3033
 
-CMD ["node", "dist/main.js"]
+CMD ["npm", "run", "start:prod"]
