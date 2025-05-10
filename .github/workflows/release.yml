@@ -138,7 +138,7 @@ jobs:
           echo '${{ secrets.PROD_ENV_FILE }}' > envfile
           cat envfile | yc compute ssh --id $VM_ID -- "cat > /opt/bottlecode-backend/.env.beta"
 
-      # Передать .env.beta, если бета-релиз
+      # Передать .env.beta
       - name: Copy .env.beta
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
