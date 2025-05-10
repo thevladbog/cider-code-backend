@@ -167,6 +167,15 @@ jobs:
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
           cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env > /dev/null"
 
+      - name: Copy YCR_REGISTRY_ID env
+        run: |
+          export YCR_REGISTRY_ID=${{ secrets.YCR_REGISTRY_ID }}
+          yc compute ssh --id "$VM_ID" -- "
+            cd /opt/bottlecode-backend \
+            && echo 'YCR_REGISTRY_ID=${YCR_REGISTRY_ID}' >> .env \
+            && ln -sf .env.beta .env.stable .env
+          "
+
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
