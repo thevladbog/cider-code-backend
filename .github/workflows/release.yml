@@ -174,6 +174,14 @@ jobs:
             sudo sh -c 'echo \"YCR_REGISTRY_ID=${YCR_REGISTRY_ID}\" >> /opt/bottlecode-backend/.env'
           "
 
+      - name: Copy YC_OAUTH_TOKEN env
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          export YC_OAUTH_TOKEN=${{ secrets.YC_OAUTH_TOKEN }}
+          yc compute ssh --id "$VM_ID" -- "
+            sudo sh -c 'echo \"YC_OAUTH_TOKEN=${YC_OAUTH_TOKEN}\" >> /opt/bottlecode-backend/.env'
+          "
+
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
@@ -192,6 +200,7 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
+            echo $YC_OAUTH_TOKEN | docker login --username oauth --password-stdin cr.yandex
             sudo docker compose pull app-beta &&
             sudo docker compose up -d app-beta &&
             sudo docker compose run --rm app-beta npx prisma migrate deploy
