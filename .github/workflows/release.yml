@@ -138,7 +138,7 @@ jobs:
       - name: Upload docker-compose.yaml to server
         run: |
           export VM_ID=${{ secrets.VM_ID }}
-          cat ./docker-compose.yaml | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/docker-compose.yaml > /dev/null"
+          cat docker-compose.yaml | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/docker-compose.yaml > /dev/null"
 
       # Передать .env.stable
       - name: Copy .env.stable
