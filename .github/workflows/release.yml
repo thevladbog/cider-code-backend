@@ -122,6 +122,9 @@ jobs:
           yc config set token "$YC_OAUTH_TOKEN"
           yc config set cloud-id "$YC_CLOUD_ID"
           yc config set folder-id "$YC_FOLDER_ID"
+          export IAM_TOKEN=`yc iam create-token`
+          echo "IAM_TOKEN=$IAM_TOKEN" >> $GITHUB_ENV
+          echo "IAM_TOKEN=$IAM_TOKEN" >> $GITHUB_OUTPUT
 
       - name: Get VM IP
         id: getip
@@ -174,6 +177,14 @@ jobs:
             sudo sh -c 'echo \"YCR_REGISTRY_ID=${YCR_REGISTRY_ID}\" >> /opt/bottlecode-backend/.env'
           "
 
+      - name: Copy YCR_REGISTRY_ID env
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          export IAM_TOKEN=$IAM_TOKEN
+          yc compute ssh --id "$VM_ID" -- "
+            sudo sh -c 'echo \"IAM_TOKEN=${IAM_TOKEN}\" >> /opt/bottlecode-backend/.env'
+          "
+
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
@@ -192,7 +203,7 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
-            yc iam create-token | sudo docker login --username iam --password-stdin cr.yandex &&
+            '$IAM_TOKEN' | sudo docker login --username iam --password-stdin cr.yandex &&
             sudo docker compose pull app-beta &&
             sudo docker compose up -d app-beta &&
             sudo docker compose run --rm app-beta npx prisma migrate deploy
