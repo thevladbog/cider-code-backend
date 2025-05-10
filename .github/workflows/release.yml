@@ -144,8 +144,7 @@ jobs:
         run: |
           export VM_ID=${{ secrets.VM_ID }}
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
-          echo "VM_ID='$VM_ID'"
-          cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta"
+          cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env.beta > /dev/null"
 
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
