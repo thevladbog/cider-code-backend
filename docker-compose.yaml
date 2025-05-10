@@ -1,4 +1,27 @@
 services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - '--api.insecure=false'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecode.app'
+      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+      - '--log.level=INFO'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - proxy
+    restart: unless-stopped
+
   postgres-stable:
     image: postgres:17-alpine
     env_file:
@@ -31,6 +54,7 @@ services:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
     depends_on:
       - postgres-stable
+      - traefik
     environment:
       NODE_ENV: 'production'
     env_file:
@@ -52,6 +76,7 @@ services:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:beta
     depends_on:
       - postgres-beta
+      - traefik
     environment:
       NODE_ENV: 'beta'
     env_file:
@@ -66,29 +91,6 @@ services:
       - 'traefik.http.services.app-beta.loadbalancer.server.port=3035'
     networks:
       - backend
-      - proxy
-    restart: unless-stopped
-
-  traefik:
-    image: traefik:v2.11
-    command:
-      - '--api.insecure=false'
-      - '--providers.docker=true'
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
-      - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
-      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
-      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecode.app'
-      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
-      - '--log.level=INFO'
-    ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_letsencrypt:/letsencrypt
-    networks:
       - proxy
     restart: unless-stopped
 
