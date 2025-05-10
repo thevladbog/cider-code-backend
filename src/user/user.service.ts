@@ -15,7 +15,6 @@ import { readFileSync } from 'fs';
 import * as path from 'path';
 import { MailService } from 'src/mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -23,9 +22,12 @@ export class UserService {
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
     private readonly emailService: MailService,
-    private readonly config: ConfigService,
   ) {}
   private readonly logger = new Logger(UserService.name);
+  private readonly privateKey = readFileSync(
+    path.resolve(__dirname, '../../../config/cert/jwt_private_key.pem'),
+    'utf8',
+  );
 
   async create(
     createUserDto: CreateUserDto,
@@ -335,19 +337,14 @@ export class UserService {
   }
 
   async getJwtToken(id: string) {
-    const privateKey: string =
-      this.config.getOrThrow('JWT_PRIVATE_KEY_PATH') ??
-      readFileSync(
-        path.resolve(__dirname, '../../../config/cert/jwt_private_key.pem'),
-        'utf8',
-      );
+    console.log({ token: this.privateKey, __dirname });
     const token = await this.jwtService.signAsync(
       {},
       {
         jwtid: nanoid(),
         subject: id,
         expiresIn: process.env.JWT_EXPIRES ?? '1h',
-        privateKey: privateKey,
+        privateKey: this.privateKey,
         algorithm: 'RS256',
       },
     );
