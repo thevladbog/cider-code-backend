@@ -81,7 +81,11 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['https://test.in.bottlecode.app:3000'],
+    origin: [
+      'https://test.in.bottlecode.app:3000',
+      'https://beta.bottlecode.app',
+      'https://bottlecode.app',
+    ],
     credentials: true,
   });
 
