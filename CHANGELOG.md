@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.8](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2025-05-10)
+
+
+### Bug Fixes
+
+* fixing env ([034db87](https://github.com/thevladbog/cider-code-backend/commit/034db870c22a26b3bedc5d3963ae257ef00d3b83))
+
 # [1.0.0-beta.7](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2025-05-10)
 
 
