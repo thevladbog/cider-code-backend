@@ -172,9 +172,7 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           export YCR_REGISTRY_ID=${{ secrets.YCR_REGISTRY_ID }}
           yc compute ssh --id "$VM_ID" -- "
-            cd /opt/bottlecode-backend \
-            && echo 'YCR_REGISTRY_ID=${YCR_REGISTRY_ID}' >> .env \
-            && ln -sf .env.beta .env.stable .env
+            sudo sh -c 'echo \"YCR_REGISTRY_ID=${YCR_REGISTRY_ID}\" >> /opt/bottlecode-backend/.env'
           "
 
       # Перезапустить только нужный сервис
