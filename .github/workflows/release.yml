@@ -139,11 +139,18 @@ jobs:
 
       # Передать .env.stable
       - name: Copy .env.stable
-        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
           export VM_ID=${{ secrets.VM_ID }}
           echo '${{ secrets.PROD_ENV_FILE }}' > envfile
           cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env.stable > /dev/null"
+
+      - name: Upload .env.stable as .env
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          echo '${{ secrets.PROD_ENV_FILE }}' > envfile
+          cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env > /dev/null"
 
       # Передать .env.beta
       - name: Copy .env.beta
@@ -152,6 +159,13 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
           cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env.beta > /dev/null"
+
+      - name: Upload .env.beta as .env
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
+        run: |
+          export VM_ID=${{ secrets.VM_ID }}
+          echo '${{ secrets.BETA_ENV_FILE }}' > envfile
+          cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env > /dev/null"
 
       # Перезапустить только нужный сервис
       - name: Restart app-stable (stable release)
