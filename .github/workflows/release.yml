@@ -169,6 +169,7 @@ jobs:
 
       - name: Copy YCR_REGISTRY_ID env
         run: |
+          export VM_ID=${{ secrets.VM_ID }}
           export YCR_REGISTRY_ID=${{ secrets.YCR_REGISTRY_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend \
@@ -180,6 +181,7 @@ jobs:
       - name: Restart app-stable (stable release)
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
+          export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
             docker compose pull app-stable &&
