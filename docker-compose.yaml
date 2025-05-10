@@ -63,7 +63,7 @@ services:
       - '3033'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.app-stable.rule=Host(api.bottlecode.app)'
+      - 'traefik.http.routers.app-stable.rule=Host(`api.bottlecode.app`)'
       - 'traefik.http.routers.app-stable.entrypoints=websecure'
       - 'traefik.http.routers.app-stable.tls.certresolver=letsencrypt'
       - 'traefik.http.services.app-stable.loadbalancer.server.port=3033'
@@ -85,7 +85,7 @@ services:
       - '3035'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.app-beta.rule=Host(beta.api.bottlecode.app)'
+      - 'traefik.http.routers.app-beta.rule=Host(`beta.api.bottlecode.app`)'
       - 'traefik.http.routers.app-beta.entrypoints=websecure'
       - 'traefik.http.routers.app-beta.tls.certresolver=letsencrypt'
       - 'traefik.http.services.app-beta.loadbalancer.server.port=3035'
