@@ -142,7 +142,9 @@ jobs:
       - name: Copy .env.beta
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
+          export VM_ID=${{ secrets.VM_ID }}
           echo '${{ secrets.BETA_ENV_FILE }}' > envfile
+          echo "VM_ID='$VM_ID'"
           cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta"
 
       # Перезапустить только нужный сервис
