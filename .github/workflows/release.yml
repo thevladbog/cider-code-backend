@@ -191,7 +191,8 @@ jobs:
         run: |
           export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
-            curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash &&
+            curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh &&
+            source "/home/vladbogserg/.bashrc" &&
             cd /opt/bottlecode-backend &&
             yc iam create-token | sudo docker login --username iam --password-stdin cr.yandex &&
             sudo docker compose pull app-beta &&
