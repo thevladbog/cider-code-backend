@@ -1,27 +1,4 @@
 services:
-  traefik:
-    image: traefik:v2.11
-    command:
-      - '--api.insecure=false'
-      - '--providers.docker=true'
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
-      - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
-      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
-      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecode.app'
-      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
-      - '--log.level=INFO'
-    ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_letsencrypt:/letsencrypt
-    networks:
-      - proxy
-    restart: unless-stopped
-
   postgres-stable:
     image: postgres:17-alpine
     env_file:
@@ -50,23 +27,48 @@ services:
       - backend
     restart: unless-stopped
 
+  traefik:
+    image: traefik:v2.11
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge=true'
+      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.letsencrypt.acme.email=hello@bottlecode.app'
+      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+      - '--log.level=INFO'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - proxy
+    restart: unless-stopped
+
   app-stable:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
     depends_on:
       - postgres-stable
       - traefik
     environment:
-      NODE_ENV: 'production'
+      NODE_ENV: production
     env_file:
       - .env.stable
     expose:
       - '3033'
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.app-stable.rule=Host(`api.bottlecode.app`)'
-      - 'traefik.http.routers.app-stable.entrypoints=websecure'
-      - 'traefik.http.routers.app-stable.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.app-stable.loadbalancer.server.port=3033'
+      - traefik.enable=true
+      - traefik.http.middlewares.redirect-https.redirectScheme.scheme=https
+      - traefik.http.middlewares.redirect-https.redirectScheme.permanent=true
+      - traefik.http.routers.app-stable.rule=Host(`api.bottlecode.app`)
+      - traefik.http.routers.app-stable.entrypoints=websecure
+      - traefik.http.routers.app-stable.tls.certresolver=letsencrypt
+      - traefik.http.services.app-stable.loadbalancer.server.port=3033
     networks:
       - backend
       - proxy
@@ -78,17 +80,19 @@ services:
       - postgres-beta
       - traefik
     environment:
-      NODE_ENV: 'beta'
+      NODE_ENV: beta
     env_file:
       - .env.beta
     expose:
       - '3035'
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.app-beta.rule=Host(`beta.api.bottlecode.app`)'
-      - 'traefik.http.routers.app-beta.entrypoints=websecure'
-      - 'traefik.http.routers.app-beta.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.app-beta.loadbalancer.server.port=3035'
+      - traefik.enable=true
+      - traefik.http.middlewares.redirect-https.redirectScheme.scheme=https
+      - traefik.http.middlewares.redirect-https.redirectScheme.permanent=true
+      - traefik.http.routers.app-beta.rule=Host(`beta.api.bottlecode.app`)
+      - traefik.http.routers.app-beta.entrypoints=websecure
+      - traefik.http.routers.app-beta.tls.certresolver=letsencrypt
+      - traefik.http.services.app-beta.loadbalancer.server.port=3035
     networks:
       - backend
       - proxy
