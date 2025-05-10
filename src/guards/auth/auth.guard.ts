@@ -45,16 +45,23 @@ export class AuthGuard implements CanActivate {
 
       // Verify the JWT and check if it has been revoked
       //--------------------------------------------------------------------------
-      if (!process.env.JWT_SECRET) {
-        this.logger.error('JWT_SECRET env var is not set');
-        throw new UnauthorizedException();
-      }
+
       const publicKey: string =
         this.configService.getOrThrow('JWT_PUBLIC_KEY_PATH') ??
         fs.readFileSync(
           __dirname + '/../../../../config/cert/jwt_public_key.pem',
           'utf8',
         );
+
+      console.log({
+        publicKey,
+        env: this.configService.getOrThrow('JWT_PUBLIC_KEY_PATH'),
+        path: fs.readFileSync(
+          __dirname + '/../../../../config/cert/jwt_public_key.pem',
+          'utf8',
+        ),
+        __dirname,
+      });
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
         publicKey,
         algorithms: ['RS256'],
