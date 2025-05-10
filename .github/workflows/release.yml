@@ -177,7 +177,7 @@ jobs:
             sudo sh -c 'echo \"YCR_REGISTRY_ID=${YCR_REGISTRY_ID}\" >> /opt/bottlecode-backend/.env'
           "
 
-      - name: Copy YCR_REGISTRY_ID env
+      - name: Copy IAM_TOKEN env
         run: |
           export VM_ID=${{ secrets.VM_ID }}
           export IAM_TOKEN=$IAM_TOKEN
@@ -203,7 +203,7 @@ jobs:
           export VM_ID=${{ secrets.VM_ID }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
-            '$IAM_TOKEN' | sudo docker login --username iam --password-stdin cr.yandex &&
+            sudo docker login --username iam --password-stdin '$IAM_TOKEN' cr.yandex &&
             sudo docker compose pull app-beta &&
             sudo docker compose up -d app-beta &&
             sudo docker compose run --rm app-beta npx prisma migrate deploy
