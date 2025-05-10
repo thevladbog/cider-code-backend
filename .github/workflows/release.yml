@@ -47,7 +47,6 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      # Определяем, это бета-релиз или стабильный
       - name: Is Beta?
         id: set_is_beta
         run: |
