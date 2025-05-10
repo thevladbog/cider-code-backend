@@ -114,9 +114,6 @@ jobs:
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
 
-      - name: Show workspace files
-        run: ls -lR
-
       - name: Auth YC CLI
         env:
           YC_OAUTH_TOKEN: ${{ secrets.YC_OAUTH_TOKEN }}
@@ -142,10 +139,11 @@ jobs:
 
       # Передать .env.stable
       - name: Copy .env.stable
-        if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
+        if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
+          export VM_ID=${{ secrets.VM_ID }}
           echo '${{ secrets.PROD_ENV_FILE }}' > envfile
-          cat envfile | yc compute ssh --id "$VM_ID" -- "cat > /opt/bottlecode-backend/.env.beta"
+          cat envfile | yc compute ssh --id "$VM_ID" -- "sudo tee /opt/bottlecode-backend/.env.stable > /dev/null"
 
       # Передать .env.beta
       - name: Copy .env.beta
@@ -170,6 +168,10 @@ jobs:
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'true' }}
         run: |
           export VM_ID=${{ secrets.VM_ID }}
+          export YCR_REGISTRY_ID=${{ secrets.YCR_REGISTRY_ID }}
+          export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           yc compute ssh --id "$VM_ID" -- "
             cd /opt/bottlecode-backend &&
             docker compose pull app-beta &&
