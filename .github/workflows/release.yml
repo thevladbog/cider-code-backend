@@ -124,7 +124,6 @@ jobs:
           yc config set folder-id "$YC_FOLDER_ID"
           export IAM_TOKEN=`yc iam create-token`
           echo "IAM_TOKEN=$IAM_TOKEN" >> $GITHUB_ENV
-          echo "IAM_TOKEN=$IAM_TOKEN" >> $GITHUB_OUTPUT
 
       - name: Get VM IP
         id: getip
