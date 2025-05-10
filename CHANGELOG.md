@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.3](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-05-10)
+
+
+### Features
+
+* added CORS origins ([7460db3](https://github.com/thevladbog/cider-code-backend/commit/7460db371fb57904293216b221f0540ef36f8569))
+
 # [1.0.0-beta.2](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-05-10)
 
 
