@@ -8,9 +8,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - /opt/pgdata:/var/lib/postgresql/data/stable
+      - /opt/pgdata/stable:/var/lib/postgresql/data
     networks:
       - backend
+    restart: unless-stopped
 
   postgres-beta:
     image: postgres:17-alpine
@@ -21,9 +22,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - /opt/pgdata:/var/lib/postgresql/data/beta
+      - /opt/pgdata/beta:/var/lib/postgresql/data
     networks:
       - backend
+    restart: unless-stopped
 
   app-stable:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
@@ -35,13 +37,14 @@ services:
       - '3033'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.app-stable.rule=Host(`api.bottlecode.app`)'
+      - 'traefik.http.routers.app-stable.rule=Host(api.bottlecode.app)'
       - 'traefik.http.routers.app-stable.entrypoints=websecure'
       - 'traefik.http.routers.app-stable.tls.certresolver=letsencrypt'
       - 'traefik.http.services.app-stable.loadbalancer.server.port=3033'
     networks:
       - backend
       - proxy
+    restart: unless-stopped
 
   app-beta:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:beta
@@ -49,17 +52,18 @@ services:
       - postgres-beta
     env_file:
       - .env.beta
-    networks:
-      - backend
-      - proxy
     expose:
       - '3035'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.app-beta.rule=Host(`beta.api.bottlecode.app`)'
+      - 'traefik.http.routers.app-beta.rule=Host(beta.api.bottlecode.app)'
       - 'traefik.http.routers.app-beta.entrypoints=websecure'
       - 'traefik.http.routers.app-beta.tls.certresolver=letsencrypt'
       - 'traefik.http.services.app-beta.loadbalancer.server.port=3035'
+    networks:
+      - backend
+      - proxy
+    restart: unless-stopped
 
   traefik:
     image: traefik:v2.11
@@ -82,6 +86,7 @@ services:
       - traefik_letsencrypt:/letsencrypt
     networks:
       - proxy
+    restart: unless-stopped
 
 networks:
   backend:
