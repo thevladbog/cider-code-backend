@@ -23,42 +23,25 @@ export class ProductService {
     limit: number,
     search: string | undefined,
   ): Promise<IProductFindMany> {
+    const where = search
+      ? {
+          OR: [
+            { fullName: { contains: search } },
+            { shortName: { contains: search } },
+            { gtin: { contains: search } },
+            { alcoholCode: { contains: search } },
+          ],
+        }
+      : {};
     const raw = await this.prismaService.$transaction([
-      this.prismaService.product.count(),
-      search
-        ? this.prismaService.product.findMany({
-            take: limit,
-            skip: limit * (page - 1),
-            where: {
-              OR: [
-                {
-                  fullName: {
-                    contains: search,
-                  },
-                },
-                {
-                  shortName: {
-                    contains: search,
-                  },
-                },
-                {
-                  gtin: {
-                    contains: search,
-                  },
-                },
-                {
-                  alcoholCode: {
-                    contains: search,
-                  },
-                },
-              ],
-            },
-          })
-        : this.prismaService.product.findMany({
-            take: limit,
-            skip: limit * (page - 1),
-            where: {},
-          }),
+      this.prismaService.product.count({
+        where,
+      }),
+      this.prismaService.product.findMany({
+        take: limit,
+        skip: limit * (page - 1),
+        where,
+      }),
     ]);
 
     const [total, data] = raw;
