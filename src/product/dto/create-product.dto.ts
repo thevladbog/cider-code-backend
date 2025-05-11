@@ -1,9 +1,32 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import {
-  ProductCreateManyInputSchema,
   ProductSchema,
+  isValidDecimalInput,
+  ProductStatusSchema,
+  DecimalJsLikeSchema,
 } from '../../../prisma/generated/zod';
+
+export const ProductCreateManyInputSchema = z
+  .object({
+    shortName: z.string(),
+    fullName: z.string(),
+    gtin: z.string(),
+    alcoholCode: z.string(),
+    expirationInDays: z.number().int(),
+    volume: z
+      .union([
+        z.number(),
+        z.string(),
+        z.instanceof(Prisma.Decimal),
+        DecimalJsLikeSchema,
+      ])
+      .refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+    pictureUrl: z.string().optional().nullable(),
+    status: z.lazy(() => ProductStatusSchema).optional(),
+  })
+  .strict();
 
 export class CreateProductDto extends createZodDto(
   ProductCreateManyInputSchema,

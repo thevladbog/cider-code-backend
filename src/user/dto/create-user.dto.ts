@@ -1,6 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
+const ROLESchema = z.enum(['ADMIN', 'SUPERVISOR', 'USER', 'GUEST']);
+
 export const UserCreateInputSchema = z
   .object({
     email: z.string(),
@@ -20,6 +22,7 @@ export const UserSchema = z.object({
   lastName: z.string(),
   password: z.string().optional(),
   picture: z.string().optional().nullable(),
+  role: ROLESchema,
   created: z.coerce.date(),
   modified: z.coerce.date().nullable(),
 });
