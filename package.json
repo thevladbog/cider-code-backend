@@ -35,7 +35,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
-    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.20",
     "@prisma/client": "^6.7.0",
     "@scalar/nestjs-api-reference": "^0.4.7",
     "@sentry/cli": "^2.43.0",
