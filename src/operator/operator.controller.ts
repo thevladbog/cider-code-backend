@@ -89,12 +89,6 @@ export class OperatorController {
       loginOperatorDto.barcode,
     );
 
-    // res.cookie(JWT_TYPE.Operator, token, {
-    //   httpOnly: false,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
-    // });
-
     return { token };
   }
 
