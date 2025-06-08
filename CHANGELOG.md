@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.0.0-beta.12](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-06-08)
+
+
+### Bug Fixes
+
+* deleted validation pipe ([0d5424b](https://github.com/thevladbog/cider-code-backend/commit/0d5424b2a31847c73625965d37509c5c1e74557e))
+
 # [1.0.0-beta.11](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-06-08)
 
 
