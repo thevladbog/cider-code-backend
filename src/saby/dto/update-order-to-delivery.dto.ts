@@ -1,6 +1,19 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateOrderToDeliveryDto } from './create-order-to-delivery.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
+import { Prisma } from '@prisma/client';
+import { OrdersToDeliveryStatusSchema } from './create-order-to-delivery.dto';
 
-export class UpdateOrderToDeliveryDto extends PartialType(
-  CreateOrderToDeliveryDto,
+export const OrdersToDeliveryUpdateInputSchema: z.ZodType<Prisma.OrdersToDeliveryUpdateInput> =
+  z
+    .object({
+      orderNumber: z.string().optional(),
+      deliveryDate: z.coerce.date().optional(),
+      status: z.lazy(() => OrdersToDeliveryStatusSchema).optional(),
+      consignee: z.string().optional(),
+      address: z.string().optional(),
+    })
+    .strict();
+
+export class UpdateOrderToDeliveryDto extends createZodDto(
+  OrdersToDeliveryUpdateInputSchema,
 ) {}
