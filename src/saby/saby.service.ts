@@ -17,16 +17,16 @@ export class SabyService {
   async create(
     createOrderToDeliveryDto: CreateOrderToDeliveryDto | string,
   ): Promise<CreatedOrderToDeliveryId> {
-    let body: CreateOrderToDeliveryDto;
-
-    if (typeof createOrderToDeliveryDto === 'string') {
-      body = JSON.parse(createOrderToDeliveryDto) as CreateOrderToDeliveryDto;
-    } else {
-      body = createOrderToDeliveryDto;
-    }
+    console.log('createOrderToDeliveryDto', {
+      createOrderToDeliveryDto,
+      type: typeof createOrderToDeliveryDto,
+    });
 
     const data = await this.prismaService.ordersToDelivery.create({
-      data: { ...body },
+      data:
+        typeof createOrderToDeliveryDto === 'string'
+          ? (JSON.parse(createOrderToDeliveryDto) as CreateOrderToDeliveryDto)
+          : createOrderToDeliveryDto,
       select: {
         id: true,
       },
