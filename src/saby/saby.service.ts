@@ -50,7 +50,7 @@ export class SabyService {
     let body: UpdateOrderToDeliveryDto;
 
     if (typeof updateOrderToDeliveryDto === 'string') {
-      body = JSON.parse(updateOrderToDeliveryDto) as CreateOrderToDeliveryDto;
+      body = JSON.parse(updateOrderToDeliveryDto) as UpdateOrderToDeliveryDto;
     } else {
       body = updateOrderToDeliveryDto;
     }
