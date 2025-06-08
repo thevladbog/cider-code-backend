@@ -131,6 +131,21 @@ model EmailTokens {
   @@map("email_tokens")
 }
 
+model OrdersToDelivery {
+  id           String                 @id @default(nanoid()) @map("_id")
+  orderNumber  String
+  deliveryDate DateTime
+  status       OrdersToDeliveryStatus @default(NEW)
+  consignee    String
+  address      String
+
+  created  DateTime? @default(now()) @map("created_at")
+  modified DateTime? @updatedAt @map("updated_at")
+
+  @@unique([orderNumber, consignee])
+  @@map("orders_to_delivery")
+}
+
 enum ProductStatus {
   ACTIVE
   INACTIVE
@@ -157,4 +172,9 @@ enum ROLE {
   SUPERVISOR
   USER
   GUEST
+}
+
+enum OrdersToDeliveryStatus {
+  NEW
+  ARCHIVE
 }
