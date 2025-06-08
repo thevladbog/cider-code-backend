@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.0.0-beta.11](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-06-08)
+
+
+### Bug Fixes
+
+* changed description ([c85c4ab](https://github.com/thevladbog/cider-code-backend/commit/c85c4abeb6a3600071dfba5ec9d1b4cdb3da8fa8))
+* fixed ApiQuery descr ([398844d](https://github.com/thevladbog/cider-code-backend/commit/398844d7be814c4538455ba85ae5b5e83002de7b))
+* fixed count ([037e8ed](https://github.com/thevladbog/cider-code-backend/commit/037e8ed8fc211ef1f50cb01d23646952de77ff8c))
+
+
+### Features
+
+* added query parameter Status ([5ad169c](https://github.com/thevladbog/cider-code-backend/commit/5ad169ceb3eda309ea7f3d35a34dc52ab17486bb))
+
 # [1.0.0-beta.10](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-06-08)
 
 
