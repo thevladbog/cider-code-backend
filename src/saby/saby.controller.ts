@@ -105,7 +105,6 @@ export class SabyController {
   @ApiQuery({
     name: 'status',
     required: false,
-    isArray: true,
     enum: ['NEW', 'ARCHIVE'],
     description: 'Order status filter',
   })
