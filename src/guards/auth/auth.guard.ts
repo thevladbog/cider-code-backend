@@ -40,7 +40,14 @@ export class AuthGuard implements CanActivate {
       //--------------------------------------------------------------------------
       const request: Request = context.switchToHttp().getRequest();
 
-      const token: string = String(request.cookies[jwtType[0]]);
+      let token: string | undefined;
+
+      if (jwtType[0] === JWT_TYPE.Common) {
+        token = String(request.cookies[jwtType[0]]);
+      } else if (jwtType[0] === JWT_TYPE.Operator) {
+        token = this.extractTokenFromHeader(request);
+      }
+
       if (!token) throw new UnauthorizedException('JWT cookie missing');
 
       // Verify the JWT and check if it has been revoked
@@ -81,5 +88,10 @@ export class AuthGuard implements CanActivate {
       this.logger.error(err);
       throw new UnauthorizedException();
     }
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
