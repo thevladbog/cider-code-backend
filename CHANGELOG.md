@@ -1,5 +1,13 @@
 # Changelog
 
+# [1.0.0-beta.13](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-06-08)
+
+
+### Features
+
+* added checks for JSON string ([7b1124e](https://github.com/thevladbog/cider-code-backend/commit/7b1124ea36088896e28d64f6e59e6905f4a8f152))
+* added validation pipe ([ba952be](https://github.com/thevladbog/cider-code-backend/commit/ba952befac6d4a114c0f6c1a37e49c5a26a8141a))
+
 # [1.0.0-beta.12](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-06-08)
 
 
