@@ -74,7 +74,6 @@ export class ProductController {
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
     @Query('search') search: string | undefined,
   ): Promise<IProductFindMany> {
-    console.log({ page, limit, search });
     return this.productService.findAll(page, limit, search);
   }
 

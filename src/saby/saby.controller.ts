@@ -23,6 +23,8 @@ import {
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
+const DEFAULT_LIMIT = 999;
+
 @ApiTags('Saby')
 @Controller('saby')
 @UsePipes(ZodValidationPipe)
@@ -103,10 +105,10 @@ export class SabyController {
   @UsePipes(ZodValidationPipe)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(999), ParseIntPipe) limit: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
     @Query('search') search: string | undefined,
   ): Promise<IOrderToDeliveryFindMany> {
-    console.log({ page, limit, search });
     return await this.sabyService.findAll(page, limit, search);
   }
 }
