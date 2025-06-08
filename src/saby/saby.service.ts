@@ -59,6 +59,8 @@ export class SabyService {
           OR: [
             { id: { contains: search } },
             { consignee: { contains: search } },
+            { orderNumber: { contains: search } },
+            { address: { contains: search } },
           ],
         }
       : {};
