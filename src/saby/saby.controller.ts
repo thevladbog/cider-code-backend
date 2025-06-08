@@ -107,7 +107,7 @@ export class SabyController {
     required: false,
     isArray: true,
     enum: ['NEW', 'ARCHIVE'],
-    description: 'Search string',
+    description: 'Order status filter',
   })
   @UsePipes(ZodValidationPipe)
   async findAll(
