@@ -337,6 +337,7 @@ export class UserService {
   }
 
   async getJwtToken(id: string) {
+    console.log({ token: this.privateKey, __dirname });
     const token = await this.jwtService.signAsync(
       {},
       {
