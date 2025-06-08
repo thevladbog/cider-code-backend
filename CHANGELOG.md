@@ -1,5 +1,18 @@
 # Changelog
 
+# [1.0.0-beta.10](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2025-06-08)
+
+
+### Bug Fixes
+
+* fixed issues ([c78a325](https://github.com/thevladbog/cider-code-backend/commit/c78a325d5b1dae6127296cc113b110151a3604d0))
+* fixed minor issues ([cf5a656](https://github.com/thevladbog/cider-code-backend/commit/cf5a656561d78dfcf8d9452a57f4226b274fbe48))
+
+
+### Features
+
+* added new method for saby res ([8b95543](https://github.com/thevladbog/cider-code-backend/commit/8b95543b3f5de51c462a201da8c73862a45851f8))
+
 # [1.0.0-beta.9](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2025-06-08)
 
 
