@@ -6,6 +6,7 @@ import { OrdersToDeliveryStatusSchema } from './create-order-to-delivery.dto';
 export const OrdersToDeliveryUpdateInputSchema: z.ZodType<Prisma.OrdersToDeliveryUpdateInput> =
   z
     .object({
+      id: z.string().optional(),
       orderNumber: z.string().optional(),
       deliveryDate: z.coerce.date().optional(),
       status: z.lazy(() => OrdersToDeliveryStatusSchema).optional(),
