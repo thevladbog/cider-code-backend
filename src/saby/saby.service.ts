@@ -69,7 +69,7 @@ export class SabyService {
     const statusWhere = status ? { status } : {};
     const raw = await this.prismaService.$transaction([
       this.prismaService.ordersToDelivery.count({
-        where,
+        where: { ...where, ...statusWhere },
       }),
       this.prismaService.ordersToDelivery.findMany({
         take: limit,
