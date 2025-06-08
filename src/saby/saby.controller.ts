@@ -102,13 +102,20 @@ export class SabyController {
     type: String,
     description: 'Search string',
   })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['NEW', 'ARCHIVE'],
+    description: 'Order status filter',
+  })
   @UsePipes(ZodValidationPipe)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
     limit: number,
     @Query('search') search: string | undefined,
+    @Query('status') status: 'NEW' | 'ARCHIVE' | undefined,
   ): Promise<IOrderToDeliveryFindMany> {
-    return await this.sabyService.findAll(page, limit, search);
+    return await this.sabyService.findAll(page, limit, search, status);
   }
 }

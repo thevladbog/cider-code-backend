@@ -53,6 +53,7 @@ export class SabyService {
     page: number,
     limit: number,
     search: string | undefined,
+    status: 'NEW' | 'ARCHIVE' | undefined,
   ): Promise<IOrderToDeliveryFindMany> {
     const where = search
       ? {
@@ -64,14 +65,16 @@ export class SabyService {
           ],
         }
       : {};
+
+    const statusWhere = status ? { status } : {};
     const raw = await this.prismaService.$transaction([
       this.prismaService.ordersToDelivery.count({
-        where,
+        where: { ...where, ...statusWhere },
       }),
       this.prismaService.ordersToDelivery.findMany({
         take: limit,
         skip: limit * (page - 1),
-        where,
+        where: { ...where, ...statusWhere },
       }),
     ]);
 
