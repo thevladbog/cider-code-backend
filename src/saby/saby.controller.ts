@@ -27,7 +27,6 @@ const DEFAULT_LIMIT = 999;
 
 @ApiTags('Saby')
 @Controller('saby')
-@UsePipes(ZodValidationPipe)
 export class SabyController {
   constructor(private readonly sabyService: SabyService) {}
 
@@ -69,7 +68,6 @@ export class SabyController {
     type: UpdateOrderToDeliveryDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @UsePipes(ZodValidationPipe)
   @Patch('/order/delivery/:id')
   async update(
     @Param('id') id: string,
