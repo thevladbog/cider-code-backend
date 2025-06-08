@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   Query,
+  Put,
 } from '@nestjs/common';
 import { SabyService } from './saby.service';
 import {
@@ -76,6 +77,23 @@ export class SabyController {
     @Body() updateOrderToDeliveryDto: UpdateOrderToDeliveryDto | string,
   ) {
     return await this.sabyService.update(id, updateOrderToDeliveryDto);
+  }
+
+  @ApiBody({
+    type: UpdateOrderToDeliveryDto,
+    description: 'Json structure for order object',
+  })
+  @ApiResponse({
+    status: 200,
+    type: UpdateOrderToDeliveryDto,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UsePipes(ZodValidationPipe)
+  @Put('/order/delivery/change/')
+  async updateFromSaby(
+    @Body() updateOrderToDeliveryDto: UpdateOrderToDeliveryDto,
+  ): Promise<UpdateOrderToDeliveryDto> {
+    return await this.sabyService.updateFromSaby(updateOrderToDeliveryDto);
   }
 
   @Get('/order/delivery/')
