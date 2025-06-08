@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.0.0-beta.15](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-06-08)
+
+
+### Bug Fixes
+
+* fixed DTO ([a9a27d1](https://github.com/thevladbog/cider-code-backend/commit/a9a27d127ff5d0bcf08e8a2963730dd6123a6650))
+
+
+### Features
+
+* **saby:** added PUT method ([236b40d](https://github.com/thevladbog/cider-code-backend/commit/236b40db194904f6b6e225db0bd40a91f9fb0d11))
+
 # [1.0.0-beta.14](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-06-08)
 
 
