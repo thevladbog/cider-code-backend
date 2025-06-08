@@ -40,9 +40,10 @@ export class SabyController {
     type: CreateOrderToDeliveryDto,
     description: 'Json structure for order object',
   })
+  @UsePipes(ZodValidationPipe)
   @Post('/order/delivery/')
   async create(
-    @Body() createOrderToDeliveryDto: CreateOrderToDeliveryDto,
+    @Body() createOrderToDeliveryDto: CreateOrderToDeliveryDto | string,
   ): Promise<CreatedOrderToDeliveryId> {
     return await this.sabyService.create(createOrderToDeliveryDto);
   }
@@ -68,10 +69,11 @@ export class SabyController {
     type: UpdateOrderToDeliveryDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UsePipes(ZodValidationPipe)
   @Patch('/order/delivery/:id')
   async update(
     @Param('id') id: string,
-    @Body() updateOrderToDeliveryDto: UpdateOrderToDeliveryDto,
+    @Body() updateOrderToDeliveryDto: UpdateOrderToDeliveryDto | string,
   ) {
     return await this.sabyService.update(id, updateOrderToDeliveryDto);
   }
