@@ -93,8 +93,6 @@ export class UserService {
       throw new HttpException('User ID is required', HttpStatus.BAD_REQUEST);
     }
 
-    console.log({ id });
-
     const data = await this.prismaService.user.findUniqueOrThrow({
       where: {
         id,
@@ -337,7 +335,6 @@ export class UserService {
   }
 
   async getJwtToken(id: string) {
-    console.log({ token: this.privateKey, __dirname });
     const token = await this.jwtService.signAsync(
       {},
       {
