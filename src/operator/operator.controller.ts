@@ -12,7 +12,6 @@ import {
   Post,
   Query,
   Req,
-  Res,
   UnauthorizedException,
   UseGuards,
   UsePipes,
@@ -29,7 +28,7 @@ import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtType } from 'src/guards/auth/jwt.metadata';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { Response, Request } from 'express';
+import { Request } from 'express';
 import { LoginOperatorDto } from './dto/login-operator.dto';
 import { ZodValidationPipe } from 'nestjs-zod';
 
@@ -85,19 +84,12 @@ export class OperatorController {
   @Post('/login')
   async login(
     @Body() loginOperatorDto: LoginOperatorDto,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<boolean> {
+  ): Promise<{ token: string }> {
     const token = await this.operatorService.loginOperator(
       loginOperatorDto.barcode,
     );
 
-    res.cookie(JWT_TYPE.Operator, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: parseInt(process.env.JWT_COOKIE_MAX_AGE ?? '57600000'),
-    });
-
-    return true;
+    return { token };
   }
 
   @ApiResponse({

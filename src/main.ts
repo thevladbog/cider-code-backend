@@ -85,6 +85,9 @@ async function bootstrap() {
       'https://test.in.bottlecode.app:3000',
       'https://beta.bottlecode.app',
       'https://bottlecode.app',
+      'https://cider-code-frontend-*-v-b.vercel.app/',
+      'http://localhost:3000',
+      '*',
     ],
     credentials: true,
   });

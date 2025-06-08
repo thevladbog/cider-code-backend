@@ -18,12 +18,29 @@ export class ProductService {
     });
   }
 
-  async findAll(page: number, limit: number): Promise<IProductFindMany> {
+  async findAll(
+    page: number,
+    limit: number,
+    search: string | undefined,
+  ): Promise<IProductFindMany> {
+    const where = search
+      ? {
+          OR: [
+            { fullName: { contains: search } },
+            { shortName: { contains: search } },
+            { gtin: { contains: search } },
+            { alcoholCode: { contains: search } },
+          ],
+        }
+      : {};
     const raw = await this.prismaService.$transaction([
-      this.prismaService.product.count(),
+      this.prismaService.product.count({
+        where,
+      }),
       this.prismaService.product.findMany({
         take: limit,
         skip: limit * (page - 1),
+        where,
       }),
     ]);
 

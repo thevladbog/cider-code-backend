@@ -80,6 +80,33 @@ export class ShiftController {
 
   @ApiResponse({
     status: 200,
+    description: 'Returns a list of shifts',
+    type: IShiftFindMany,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+  })
+  @JwtType(JWT_TYPE.Operator)
+  @UseGuards(AuthGuard)
+  @Get('/operator')
+  async findAllForApp(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+  ): Promise<IShiftFindMany> {
+    return await this.shiftService.findAll(page, limit);
+  }
+
+  @ApiResponse({
+    status: 200,
     description: 'Returns the requested shift',
     type: IShiftFindOne,
   })
@@ -91,6 +118,22 @@ export class ShiftController {
   @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<IShiftFindOne> {
+    return await this.shiftService.findOne(id);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the requested shift',
+    type: IShiftFindOne,
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Shift can't be found or something went wrong",
+  })
+  @JwtType(JWT_TYPE.Operator)
+  @UseGuards(AuthGuard)
+  @Get('/operator/:id')
+  async findOneForApp(@Param('id') id: string): Promise<IShiftFindOne> {
     return await this.shiftService.findOne(id);
   }
 

@@ -1,4 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
+import { SelectProductDto } from 'src/product/dto/select-product.dto';
 import { z } from 'zod';
 
 const ShiftStatusSchema = z.enum([
@@ -40,8 +41,12 @@ export const ShiftSchema = z.object({
 
 export class ShiftDto extends createZodDto(ShiftSchema) {}
 
+export interface OperatorShiftDto extends Omit<ShiftDto, 'productId'> {
+  product: SelectProductDto;
+}
+
 export class IShiftFindMany {
-  result: ShiftDto[];
+  result: OperatorShiftDto[];
   total: number;
   page: number;
   limit: number;

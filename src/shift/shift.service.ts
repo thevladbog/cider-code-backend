@@ -44,6 +44,9 @@ export class ShiftService {
       this.prismaService.shift.findMany({
         take: limit,
         skip: limit * (page - 1),
+        include: {
+          product: true,
+        },
       }),
     ]);
 
@@ -66,6 +69,9 @@ export class ShiftService {
     const data = await this.prismaService.shift.findUniqueOrThrow({
       where: {
         id,
+      },
+      include: {
+        product: true,
       },
     });
 
