@@ -15,10 +15,18 @@ export class SabyService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(
-    CreateOrderToDeliveryDto: CreateOrderToDeliveryDto,
+    createOrderToDeliveryDto: CreateOrderToDeliveryDto | string,
   ): Promise<CreatedOrderToDeliveryId> {
+    let body: CreateOrderToDeliveryDto;
+
+    if (typeof createOrderToDeliveryDto === 'string') {
+      body = JSON.parse(createOrderToDeliveryDto) as CreateOrderToDeliveryDto;
+    } else {
+      body = createOrderToDeliveryDto;
+    }
+
     const data = await this.prismaService.ordersToDelivery.create({
-      data: { ...CreateOrderToDeliveryDto },
+      data: { ...body },
       select: {
         id: true,
       },
@@ -37,14 +45,22 @@ export class SabyService {
 
   async update(
     id: string,
-    updateOrderToDeliveryDto: UpdateOrderToDeliveryDto,
+    updateOrderToDeliveryDto: UpdateOrderToDeliveryDto | string,
   ): Promise<UpdateOrderToDeliveryDto> {
+    let body: UpdateOrderToDeliveryDto;
+
+    if (typeof updateOrderToDeliveryDto === 'string') {
+      body = JSON.parse(updateOrderToDeliveryDto) as CreateOrderToDeliveryDto;
+    } else {
+      body = updateOrderToDeliveryDto;
+    }
+
     return this.prismaService.ordersToDelivery.update({
       where: {
         id,
       },
       data: {
-        ...updateOrderToDeliveryDto,
+        ...body,
       },
     });
   }
