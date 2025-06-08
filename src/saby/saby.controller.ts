@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   UsePipes,
+  ParseIntPipe,
+  DefaultValuePipe,
+  Query,
 } from '@nestjs/common';
 import { SabyService } from './saby.service';
 import {
@@ -13,8 +16,11 @@ import {
   CreateOrderToDeliveryDto,
 } from './dto/create-order-to-delivery.dto';
 import { UpdateOrderToDeliveryDto } from './dto/update-order-to-delivery.dto';
-import { SelectOrderToDeliveryDto } from './dto/select-order-to-delivery.dto';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  IOrderToDeliveryFindMany,
+  SelectOrderToDeliveryDto,
+} from './dto/select-order-to-delivery.dto';
+import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 @ApiTags('Saby')
@@ -68,5 +74,39 @@ export class SabyController {
     @Body() updateOrderToDeliveryDto: UpdateOrderToDeliveryDto,
   ) {
     return await this.sabyService.update(id, updateOrderToDeliveryDto);
+  }
+
+  @Get('/order/delivery/')
+  @ApiResponse({
+    status: 200,
+    type: IOrderToDeliveryFindMany,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search string',
+  })
+  @UsePipes(ZodValidationPipe)
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(999), ParseIntPipe) limit: number,
+    @Query('search') search: string | undefined,
+  ): Promise<IOrderToDeliveryFindMany> {
+    console.log({ page, limit, search });
+    return await this.sabyService.findAll(page, limit, search);
   }
 }

@@ -16,3 +16,11 @@ export const OrdersToDeliverySchema = z.object({
 export class SelectOrderToDeliveryDto extends createZodDto(
   OrdersToDeliverySchema,
 ) {}
+
+export class IOrderToDeliveryFindMany {
+  result: SelectOrderToDeliveryDto[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPage: number;
+}
