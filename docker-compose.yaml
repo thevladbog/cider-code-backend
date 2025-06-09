@@ -51,7 +51,6 @@ services:
       - backend
       - proxy
     restart: unless-stopped
-
   app-stable:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
     depends_on:
@@ -61,6 +60,8 @@ services:
       NODE_ENV: production
     env_file:
       - .env.stable
+    volumes:
+      - ./config/cert:/app/config/cert
     expose:
       - '3033'
     labels:
@@ -75,7 +76,6 @@ services:
       - backend-stable
       - proxy
     restart: unless-stopped
-
   app-beta:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:beta
     depends_on:
@@ -85,6 +85,8 @@ services:
       NODE_ENV: beta
     env_file:
       - .env.beta
+    volumes:
+      - ./config/cert:/app/config/cert
     expose:
       - '3035'
     labels:
