@@ -1,5 +1,39 @@
 # Changelog
 
+# [1.0.0-beta.15](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-06-08)
+
+
+### Bug Fixes
+
+* fixed DTO ([a9a27d1](https://github.com/thevladbog/cider-code-backend/commit/a9a27d127ff5d0bcf08e8a2963730dd6123a6650))
+
+
+### Features
+
+* **saby:** added PUT method ([236b40d](https://github.com/thevladbog/cider-code-backend/commit/236b40db194904f6b6e225db0bd40a91f9fb0d11))
+
+# [1.0.0-beta.14](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-06-08)
+
+
+### Bug Fixes
+
+* fixing errors ([1518e12](https://github.com/thevladbog/cider-code-backend/commit/1518e123752afd8c9b46de2ca787ee3d3868bccc))
+
+# [1.0.0-beta.13](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-06-08)
+
+
+### Features
+
+* added checks for JSON string ([7b1124e](https://github.com/thevladbog/cider-code-backend/commit/7b1124ea36088896e28d64f6e59e6905f4a8f152))
+* added validation pipe ([ba952be](https://github.com/thevladbog/cider-code-backend/commit/ba952befac6d4a114c0f6c1a37e49c5a26a8141a))
+
+# [1.0.0-beta.12](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-06-08)
+
+
+### Bug Fixes
+
+* deleted validation pipe ([0d5424b](https://github.com/thevladbog/cider-code-backend/commit/0d5424b2a31847c73625965d37509c5c1e74557e))
+
 # [1.0.0-beta.11](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-06-08)
 
 
