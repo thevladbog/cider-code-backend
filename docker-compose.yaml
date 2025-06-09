@@ -60,8 +60,6 @@ services:
       NODE_ENV: production
     env_file:
       - .env.stable
-    volumes:
-      - ./config/cert:/app/config/cert
     expose:
       - '3033'
     labels:
@@ -85,8 +83,6 @@ services:
       NODE_ENV: beta
     env_file:
       - .env.beta
-    volumes:
-      - ./config/cert:/app/config/cert
     expose:
       - '3035'
     labels:
