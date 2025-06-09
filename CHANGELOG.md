@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0...v1.0.1) (2025-06-09)
+
+
+### Bug Fixes
+
+* fixing docker-compose ([b17c7a0](https://github.com/thevladbog/cider-code-backend/commit/b17c7a02f30f70e151c620763ebf5472d62556a6))
+
 # 1.0.0 (2025-06-09)
 
 
