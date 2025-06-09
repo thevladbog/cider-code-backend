@@ -9,14 +9,23 @@ import * as cookieParser from 'cookie-parser';
 import * as Sentry from '@sentry/nestjs';
 import * as fs from 'fs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
 
 patchNestJsSwagger();
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: fs.readFileSync('./src/config/cert/key.pem'),
-    cert: fs.readFileSync('./src/config/cert/cert.pem'),
-  };
+  let httpsOptions: HttpsOptions | undefined;
+  if (
+    process.env.NODE_ENV === 'production' ||
+    process.env.NODE_ENV === 'beta'
+  ) {
+    httpsOptions = undefined;
+  } else {
+    httpsOptions = {
+      key: fs.readFileSync('./src/config/cert/key.pem'),
+      cert: fs.readFileSync('./src/config/cert/cert.pem'),
+    };
+  }
 
   const app = await NestFactory.create(AppModule, { httpsOptions });
   patchNestJsSwagger();
@@ -72,7 +81,14 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['https://test.in.bottlecode.app:3000'],
+    origin: [
+      'https://test.in.bottlecode.app:3000',
+      'https://beta.bottlecode.app',
+      'https://bottlecode.app',
+      'https://cider-code-frontend-*-v-b.vercel.app/',
+      'http://localhost:3000',
+      '*',
+    ],
     credentials: true,
   });
 

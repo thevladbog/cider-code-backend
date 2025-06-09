@@ -20,6 +20,7 @@ import { join } from 'path';
 import { readFileSync, existsSync } from 'fs';
 import { ShiftModule } from './shift/shift.module';
 import { MailModule } from './mail/mail.module';
+import { SabyModule } from './saby/saby.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { MailModule } from './mail/mail.module';
     OperatorModule,
     ShiftModule,
     MailModule,
+    SabyModule,
   ],
   controllers: [],
   providers: [

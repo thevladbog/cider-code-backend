@@ -107,6 +107,7 @@ model User {
   lastName  String  @map("last_name") @db.VarChar(80)
   password  String
   picture   String?
+  role      ROLE    @default(GUEST)
 
   created     DateTime      @default(now()) @map("created_at")
   modified    DateTime?     @updatedAt @map("updated_at")
@@ -130,6 +131,21 @@ model EmailTokens {
   @@map("email_tokens")
 }
 
+model OrdersToDelivery {
+  id           String                 @id @default(nanoid()) @map("_id")
+  orderNumber  String
+  deliveryDate DateTime
+  status       OrdersToDeliveryStatus @default(NEW)
+  consignee    String
+  address      String
+
+  created  DateTime? @default(now()) @map("created_at")
+  modified DateTime? @updatedAt @map("updated_at")
+
+  @@unique([orderNumber, consignee])
+  @@map("orders_to_delivery")
+}
+
 enum ProductStatus {
   ACTIVE
   INACTIVE
@@ -149,4 +165,16 @@ enum ShiftStatus {
   PAUSED
   DONE
   CANCELED
+}
+
+enum ROLE {
+  ADMIN
+  SUPERVISOR
+  USER
+  GUEST
+}
+
+enum OrdersToDeliveryStatus {
+  NEW
+  ARCHIVE
 }

@@ -13,7 +13,6 @@ import { Reflector } from '@nestjs/core';
 import { JwtPayload } from 'src/contracts/jwt-payload/jwt-payload.interface';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
 import * as fs from 'fs';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,7 +20,6 @@ export class AuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly reflector: Reflector,
-    private readonly configService: ConfigService,
   ) {}
   private readonly logger = new Logger(AuthGuard.name);
 
@@ -40,16 +38,20 @@ export class AuthGuard implements CanActivate {
       //--------------------------------------------------------------------------
       const request: Request = context.switchToHttp().getRequest();
 
-      const token: string = String(request.cookies[jwtType[0]]);
+      let token: string | undefined;
+
+      if (jwtType[0] === JWT_TYPE.Common) {
+        token = String(request.cookies[jwtType[0]]);
+      } else if (jwtType[0] === JWT_TYPE.Operator) {
+        token = this.extractTokenFromHeader(request);
+      }
+
       if (!token) throw new UnauthorizedException('JWT cookie missing');
 
       // Verify the JWT and check if it has been revoked
       //--------------------------------------------------------------------------
-      if (!process.env.JWT_SECRET) {
-        this.logger.error('JWT_SECRET env var is not set');
-        throw new UnauthorizedException();
-      }
-      const publicKey = fs.readFileSync(
+
+      const publicKey: string = fs.readFileSync(
         __dirname + '/../../../../config/cert/jwt_public_key.pem',
         'utf8',
       );
@@ -81,5 +83,10 @@ export class AuthGuard implements CanActivate {
       this.logger.error(err);
       throw new UnauthorizedException();
     }
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
