@@ -133,11 +133,6 @@ export class CodeService {
       const shiftId = packCodesDto.shiftId;
       const productId = packCodesDto.productId;
 
-      // Проверка входных данных
-      this.ssccSchema.parse(ssccCode);
-      z.string().min(1).parse(shiftId);
-      z.string().min(1).parse(productId);
-
       // Проверка существования BoxesCode
       const boxCode = await this.prisma.boxesCode.findFirst({
         where: {
@@ -154,24 +149,27 @@ export class CodeService {
 
       // Обновление статуса индивидуальных кодов и привязка к коробке
       await this.prisma.$transaction(async (tx) => {
-        for (const code of codes) {
-          const individualCode = await tx.individualCode.findUnique({
-            where: { code: code },
-          });
+        const individualCodes = await tx.individualCode.findMany({
+          where: { code: { in: codes } },
+        });
 
-          if (!individualCode) {
-            throw new NotFoundException(`Individual code ${code} not found`);
-          }
-
-          await tx.individualCode.update({
-            where: { code: code },
-            data: {
-              status: IndividualCodeStatus.USED,
-              boxesCodeId: id,
-              shiftId: shiftId,
-            },
-          });
+        if (individualCodes.length !== codes.length) {
+          const missingCodes = codes.filter(
+            (code) => !individualCodes.some((ic) => ic.code === code),
+          );
+          throw new NotFoundException(
+            `Individual codes not found: ${missingCodes.join(', ')}`,
+          );
         }
+
+        await tx.individualCode.updateMany({
+          where: { code: { in: codes } },
+          data: {
+            status: IndividualCodeStatus.USED,
+            boxesCodeId: id,
+            shiftId: shiftId,
+          },
+        });
       });
 
       // Генерация нового SSCC кода
