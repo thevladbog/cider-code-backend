@@ -223,23 +223,26 @@ export class CodeService {
 
       // Обновление статуса индивидуальных кодов и привязка к смене
       await this.prisma.$transaction(async (tx) => {
-        for (const code of codes) {
-          const individualCode = await tx.individualCode.findUnique({
-            where: { code: code },
-          });
+        const existingCodes = await tx.individualCode.findMany({
+          where: { code: { in: codes } },
+        });
 
-          if (!individualCode) {
-            throw new NotFoundException(`Individual code ${code} not found`);
-          }
+        const existingCodeSet = new Set(existingCodes.map((code) => code.code));
+        const missingCodes = codes.filter((code) => !existingCodeSet.has(code));
 
-          await tx.individualCode.update({
-            where: { code: code },
-            data: {
-              status: IndividualCodeStatus.USED,
-              shiftId: shiftId,
-            },
-          });
+        if (missingCodes.length > 0) {
+          throw new NotFoundException(
+            `Individual codes not found: ${missingCodes.join(', ')}`,
+          );
         }
+
+        await tx.individualCode.updateMany({
+          where: { code: { in: codes } },
+          data: {
+            status: IndividualCodeStatus.USED,
+            shiftId: shiftId,
+          },
+        });
       });
 
       this.logger.log(
