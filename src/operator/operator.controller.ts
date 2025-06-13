@@ -24,7 +24,7 @@ import {
   IOperatorFindOne,
 } from './dto/create-operator.dto';
 import { UpdateOperatorDto } from './dto/update-operator.dto';
-import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { JwtType } from 'src/guards/auth/jwt.metadata';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
@@ -35,7 +35,11 @@ import { ZodValidationPipe } from 'nestjs-zod';
 @Controller('operator')
 export class OperatorController {
   constructor(private readonly operatorService: OperatorService) {}
-
+  @ApiOperation({
+    summary: 'Create operator',
+    description: 'Create a new operator account in the system',
+    tags: ['Operator'],
+  })
   @ApiResponse({
     status: 201,
     description: 'User successfully created',
@@ -51,7 +55,11 @@ export class OperatorController {
   ): Promise<CreatedOperatorDto> {
     return await this.operatorService.createOperator(createOperatorDto);
   }
-
+  @ApiOperation({
+    summary: 'Update operator',
+    description: 'Update operator information such as name or barcode',
+    tags: ['Operator'],
+  })
   @ApiResponse({ status: 200, type: IOperatorFindOne })
   @ApiResponse({ status: 404, description: 'Operator not found' })
   @JwtType(JWT_TYPE.Common)
@@ -73,7 +81,11 @@ export class OperatorController {
 
     return res;
   }
-
+  @ApiOperation({
+    summary: 'Login operator',
+    description: 'Authenticate an operator using barcode and return JWT token',
+    tags: ['Operator', 'Authentication'],
+  })
   @ApiResponse({
     status: 201,
     description: 'Operator login successful',
@@ -91,10 +103,14 @@ export class OperatorController {
 
     return { token };
   }
-
+  @ApiOperation({
+    summary: 'Get all operators',
+    description: 'Retrieve a paginated list of all operators in the system',
+    tags: ['Operator'],
+  })
   @ApiResponse({
     status: 200,
-    description: 'Returns a list of users',
+    description: 'Returns a list of operators',
     type: IOperatorFindMany,
   })
   @ApiQuery({
@@ -118,15 +134,19 @@ export class OperatorController {
   ): Promise<IOperatorFindMany> {
     return await this.operatorService.getAll(page, limit);
   }
-
+  @ApiOperation({
+    summary: 'Get operator by ID',
+    description: 'Retrieve detailed information about a specific operator',
+    tags: ['Operator'],
+  })
   @ApiResponse({
     status: 200,
-    description: 'Returns the requested user',
+    description: 'Returns the requested operator',
     type: IOperatorFindOne,
   })
   @ApiResponse({
     status: 404,
-    description: "User can't be found or something went wrong",
+    description: "Operator can't be found or something went wrong",
   })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
@@ -134,7 +154,20 @@ export class OperatorController {
   async findOne(@Param('id') id: string): Promise<IOperatorFindOne> {
     return await this.operatorService.getOne(id);
   }
-
+  @ApiOperation({
+    summary: 'Get current operator',
+    description: 'Get details of the currently authenticated operator',
+    tags: ['Operator', 'Authentication'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns current operator information',
+    type: IOperatorFindOne,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or operator token missing',
+  })
   @JwtType(JWT_TYPE.Operator)
   @UseGuards(AuthGuard)
   @Get('/me')
