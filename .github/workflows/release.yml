@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
       - uses: actions/setup-node@v4
         with:
@@ -55,6 +56,20 @@ jobs:
           else
             echo "BETA=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Update version in package.json
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          # Update version in package.json
+          npm version "$VERSION" --no-git-tag-version
+
+      - name: Commit and push updated package.json
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
 
   build-and-push:
     runs-on: ubuntu-latest
