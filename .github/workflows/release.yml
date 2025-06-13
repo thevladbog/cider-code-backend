@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
       - uses: actions/setup-node@v4
         with:
@@ -59,8 +60,8 @@ jobs:
       - name: Update version in package.json
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-          # Обновляем версию в package.json
-          npm version $VERSION --no-git-tag-version
+          # Update version in package.json
+          npm version "$VERSION" --no-git-tag-version
 
       - name: Commit and push updated package.json
         run: |

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ShiftService } from './shift.service';
+import { ShiftService } from 'src/shift/shift.service';
 
 describe('ShiftService', () => {
   let service: ShiftService;
