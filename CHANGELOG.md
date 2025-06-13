@@ -1,5 +1,23 @@
 # Changelog
 
+# [1.0.0-beta.16](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2025-06-13)
+
+
+### Bug Fixes
+
+* fixed minor issues ([f61e687](https://github.com/thevladbog/cider-code-backend/commit/f61e687253240cc8f3b93961ec16e27238213ad1))
+* fixed minor issues ([b117007](https://github.com/thevladbog/cider-code-backend/commit/b117007fdf8bc363c462f6652d72f915d625a1b7))
+* fixed transaction ([7689b8a](https://github.com/thevladbog/cider-code-backend/commit/7689b8add985484a54e660153410c4dc35c4f03e))
+* fixed zod typing ([e9dcdd9](https://github.com/thevladbog/cider-code-backend/commit/e9dcdd9b12d41fb2c83d63073f2eedd20a874d96))
+* minor fixes ([5c41fb3](https://github.com/thevladbog/cider-code-backend/commit/5c41fb3a7f25ac210c9dcd0d756e04c5f10a7ebc))
+
+
+### Features
+
+* added changing version in package.json on release ([628fa00](https://github.com/thevladbog/cider-code-backend/commit/628fa00b8e54165116fc25da1519acb773b398a2))
+* **api:** enhance Swagger documentation across all controllers ([669450d](https://github.com/thevladbog/cider-code-backend/commit/669450da6e5500d4f748e55c3e5a1183a5cd322e))
+* implement code packaging and status update endpoints ([59bae5f](https://github.com/thevladbog/cider-code-backend/commit/59bae5fd226727194370b07fc5eb805880b9c29f))
+
 # [1.0.0-beta.15](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-06-08)
 
 
