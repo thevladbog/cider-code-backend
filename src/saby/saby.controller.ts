@@ -21,7 +21,13 @@ import {
   IOrderToDeliveryFindMany,
   SelectOrderToDeliveryDto,
 } from './dto/select-order-to-delivery.dto';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 const DEFAULT_LIMIT = 999;
@@ -30,7 +36,11 @@ const DEFAULT_LIMIT = 999;
 @Controller('saby')
 export class SabyController {
   constructor(private readonly sabyService: SabyService) {}
-
+  @ApiOperation({
+    summary: 'Create delivery order',
+    description: 'Creates a new delivery order in the SABY system',
+    tags: ['Saby Orders'],
+  })
   @ApiResponse({
     status: 201,
     description: 'The record has been successfully created.',
@@ -48,19 +58,30 @@ export class SabyController {
   ): Promise<CreatedOrderToDeliveryId> {
     return await this.sabyService.create(createOrderToDeliveryDto);
   }
-
+  @ApiOperation({
+    summary: 'Get delivery order by ID',
+    description:
+      'Retrieves a specific delivery order from the SABY system by its ID',
+    tags: ['Saby Orders'],
+  })
   @ApiResponse({
     status: 200,
     type: SelectOrderToDeliveryDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Order not found.' })
   @Get('/order/delivery/:id')
   async findOne(
     @Param('id') id: string,
   ): Promise<SelectOrderToDeliveryDto | null> {
     return await this.sabyService.findOne(id);
   }
-
+  @ApiOperation({
+    summary: 'Update delivery order',
+    description:
+      'Updates an existing delivery order in the SABY system by its ID',
+    tags: ['Saby Orders'],
+  })
   @ApiBody({
     type: UpdateOrderToDeliveryDto,
     description: 'Json structure for order object',
@@ -70,6 +91,7 @@ export class SabyController {
     type: UpdateOrderToDeliveryDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Order not found.' })
   @UsePipes(ZodValidationPipe)
   @Patch('/order/delivery/:id')
   async update(
@@ -78,7 +100,12 @@ export class SabyController {
   ) {
     return await this.sabyService.update(id, updateOrderToDeliveryDto);
   }
-
+  @ApiOperation({
+    summary: 'Update delivery order from SABY',
+    description:
+      'Updates a delivery order with information received from the SABY system',
+    tags: ['Saby Orders'],
+  })
   @ApiBody({
     type: UpdateOrderToDeliveryDto,
     description: 'Json structure for order object',
@@ -88,6 +115,7 @@ export class SabyController {
     type: UpdateOrderToDeliveryDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Order not found.' })
   @UsePipes(ZodValidationPipe)
   @Put('/order/delivery/change/')
   async updateFromSaby(
@@ -95,7 +123,12 @@ export class SabyController {
   ): Promise<UpdateOrderToDeliveryDto> {
     return await this.sabyService.updateFromSaby(updateOrderToDeliveryDto);
   }
-
+  @ApiOperation({
+    summary: 'Get all delivery orders',
+    description:
+      'Retrieves a paginated list of delivery orders from the SABY system with optional filtering',
+    tags: ['Saby Orders'],
+  })
   @Get('/order/delivery/')
   @ApiResponse({
     status: 200,
