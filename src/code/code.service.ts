@@ -15,6 +15,9 @@ import {
   BoxesCodeDataDto,
   WriteBoxesCodeDto,
 } from './dto/write-boxes-code.dto';
+import { PackCodesDto, PackedCodesResponseDto } from './dto/pack-codes.dto';
+import { IndividualCodeStatus } from '@prisma/client';
+import { UpdateCodesStatusDto } from './dto/update-codes-status.dto';
 
 @Injectable()
 export class CodeService {
@@ -120,6 +123,142 @@ export class CodeService {
       throw new InternalServerErrorException(
         'Failed to write SSCC code to database',
       );
+    }
+  }
+  async packCodes(packCodesDto: PackCodesDto): Promise<PackedCodesResponseDto> {
+    try {
+      const id = packCodesDto.id;
+      const ssccCode = packCodesDto.ssccCode;
+      const codes = packCodesDto.codes;
+      const shiftId = packCodesDto.shiftId;
+      const productId = packCodesDto.productId;
+
+      // Проверка входных данных
+      this.ssccSchema.parse(ssccCode);
+      z.string().min(1).parse(shiftId);
+      z.string().min(1).parse(productId);
+
+      // Проверка существования BoxesCode
+      const boxCode = await this.prisma.boxesCode.findFirst({
+        where: {
+          id: id,
+          sscc: ssccCode,
+        },
+      });
+
+      if (!boxCode) {
+        throw new NotFoundException(
+          `BoxesCode with id ${id} and sscc ${ssccCode} not found`,
+        );
+      }
+
+      // Обновление статуса индивидуальных кодов и привязка к коробке
+      await this.prisma.$transaction(async (tx) => {
+        for (const code of codes) {
+          const individualCode = await tx.individualCode.findUnique({
+            where: { code: code },
+          });
+
+          if (!individualCode) {
+            throw new NotFoundException(`Individual code ${code} not found`);
+          }
+
+          await tx.individualCode.update({
+            where: { code: code },
+            data: {
+              status: IndividualCodeStatus.USED,
+              boxesCodeId: id,
+              shiftId: shiftId,
+            },
+          });
+        }
+      });
+
+      // Генерация нового SSCC кода
+      const newSscc = await this.generateNextSscc(ssccCode);
+
+      // Запись нового SSCC кода в базу
+      const newBoxCode = await this.prisma.boxesCode.create({
+        data: {
+          sscc: newSscc,
+          gln: boxCode.gln, // используем GLN из предыдущего кода
+          productId: productId,
+          shiftId: shiftId,
+        },
+      });
+
+      return {
+        id: newBoxCode.id,
+        ssccCode: newBoxCode.sscc,
+      };
+    } catch (error) {
+      this.logger.error('Failed to pack codes:', error);
+
+      if (error instanceof z.ZodError) {
+        throw new BadRequestException('Invalid input data format');
+      }
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Failed to process code packing');
+    }
+  }
+  async updateCodesStatus(
+    updateCodesStatusDto: UpdateCodesStatusDto,
+  ): Promise<void> {
+    try {
+      const { codes, shiftId } = updateCodesStatusDto;
+
+      // Проверка входных данных
+      z.string().min(1).parse(shiftId);
+
+      // Проверка существования Shift
+      const shift = await this.prisma.shift.findUnique({
+        where: { id: shiftId },
+      });
+
+      if (!shift) {
+        throw new NotFoundException(`Shift with id ${shiftId} not found`);
+      }
+
+      // Обновление статуса индивидуальных кодов и привязка к смене
+      await this.prisma.$transaction(async (tx) => {
+        for (const code of codes) {
+          const individualCode = await tx.individualCode.findUnique({
+            where: { code: code },
+          });
+
+          if (!individualCode) {
+            throw new NotFoundException(`Individual code ${code} not found`);
+          }
+
+          await tx.individualCode.update({
+            where: { code: code },
+            data: {
+              status: IndividualCodeStatus.USED,
+              shiftId: shiftId,
+            },
+          });
+        }
+      });
+
+      this.logger.log(
+        `Updated status for ${codes.length} codes in shift ${shiftId}`,
+      );
+    } catch (error) {
+      this.logger.error('Failed to update codes status:', error);
+
+      if (error instanceof z.ZodError) {
+        throw new BadRequestException('Invalid input data format');
+      }
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Failed to update codes status');
     }
   }
 
