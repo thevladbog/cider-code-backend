@@ -64,6 +64,7 @@ async function bootstrap() {
     '/api',
     apiReference({
       theme: 'kepler',
+      url: '/api-json',
       darkMode: true,
       spec: {
         content: document,
@@ -86,7 +87,6 @@ async function bootstrap() {
       'https://beta.bottlecode.app',
       'https://bottlecode.app',
       'https://cider-code-frontend-*-v-b.vercel.app/',
-      'http://localhost:3000',
       '*',
     ],
     credentials: true,
