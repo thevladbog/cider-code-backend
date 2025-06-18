@@ -23,6 +23,7 @@ import {
   CreateUserDto,
   IUserFindMany,
   IUserFindOne,
+  UserLoginResponse,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -170,6 +171,7 @@ export class UserController {
   ): Promise<{ id: string; message: string }> {
     return await this.userService.remove(id);
   }
+
   @ApiOperation({
     summary: 'Sign in user',
     description:
@@ -179,6 +181,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'User successfully signed in, JWT token set in cookies',
+    type: UserLoginResponse,
   })
   @ApiResponse({
     status: 401,
@@ -190,8 +193,8 @@ export class UserController {
   async signIn(
     @Body() credentials: SignInDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
-    const { user, token }: { user: Partial<CreatedUserDto>; token: string } =
+  ): Promise<UserLoginResponse> {
+    const { user, token }: { user: CreatedUserDto; token: string } =
       await this.userService.signIn(credentials);
 
     res.cookie('jwt', token, {
@@ -201,8 +204,9 @@ export class UserController {
       sameSite: 'none',
     });
 
-    res.send({ user: user });
+    return { user: user };
   }
+
   @ApiOperation({
     summary: 'Reset password request',
     description:

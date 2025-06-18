@@ -57,14 +57,15 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config); // serializable object - conform to OpenAPI
   SwaggerModule.setup('api', app, document, {
-    swaggerUiEnabled: false,
+    ui: true,
+    jsonDocumentUrl: 'api/json',
+    yamlDocumentUrl: 'api/yaml',
   });
 
   app.use(
-    '/api',
+    '/api/scalar',
     apiReference({
       theme: 'kepler',
-      url: '/api-json',
       darkMode: true,
       spec: {
         content: document,
@@ -87,6 +88,7 @@ async function bootstrap() {
       'https://beta.bottlecode.app',
       'https://bottlecode.app',
       'https://cider-code-frontend-*-v-b.vercel.app/',
+      'http://localhost:3000',
       '*',
     ],
     credentials: true,
