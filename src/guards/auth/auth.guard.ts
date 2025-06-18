@@ -89,7 +89,7 @@ export class AuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
     if (!authHeader) return undefined;
 
-    // Убираем фигурные скобки с начала и конца всего заголовка, если они есть
+    // Remove leading/trailing curly braces from malformed authorization headers
     const cleanedHeader = authHeader.replace(/^{|}$/g, '');
 
     const [type, token] = cleanedHeader.split(' ') ?? [];

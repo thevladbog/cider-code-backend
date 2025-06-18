@@ -111,12 +111,12 @@ export class CodeService {
       if (currentSscc && !gln) {
         gln = this.extractGlnFromSscc(currentSscc);
         this.logger.log(`Extracted GLN from SSCC: ${gln}`);
-      } else if (gln) {
+      } else if (!gln) {
+        gln = '46800899'; // Default GLN
+      }
+
+      if (gln) {
         z.string().min(1).parse(gln);
-      } else {
-        throw new BadRequestException(
-          'GLN is required when SSCC is not provided',
-        );
       }
 
       z.string().min(1).parse(productId);

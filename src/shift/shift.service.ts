@@ -166,7 +166,7 @@ export class ShiftService {
       }
 
       // Устанавливаем плановую дату - сегодня если не указана
-      const plannedDate = createShiftByOperatorDto.plannedDay || new Date();
+      const plannedDate = createShiftByOperatorDto.plannedDay ?? new Date();
 
       // Создаем смену
       const shift = await this.prismaService.shift.create({
