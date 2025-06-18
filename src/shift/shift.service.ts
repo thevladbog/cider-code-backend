@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import {
   CreateShiftDto,
+  CreateShiftByOperatorDto,
   IDeletedShift,
   IShiftFindMany,
   IShiftFindOne,
@@ -125,6 +126,74 @@ export class ShiftService {
           throw new HttpException(
             `Shift with id ${id} not found`,
             HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+
+      this.logger.error('Something went wrong', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Создание смены оператором по EAN/GTIN
+   */
+  async createByOperator(
+    createShiftByOperatorDto: CreateShiftByOperatorDto,
+    operatorId: string,
+  ): Promise<IShiftFindOne> {
+    try {
+      // Преобразуем EAN в GTIN если необходимо
+      let gtin = createShiftByOperatorDto.ean;
+      if (gtin.length < 14) {
+        // Добавляем ведущие нули для получения 14-значного GTIN
+        gtin = gtin.padStart(14, '0');
+      }
+
+      // Находим продукт по GTIN со статусом ACTIVE
+      const product = await this.prismaService.product.findFirst({
+        where: {
+          gtin: gtin,
+          status: 'ACTIVE',
+        },
+      });
+
+      if (!product) {
+        throw new HttpException(
+          `Product with GTIN ${gtin} not found or not active`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // Устанавливаем плановую дату - сегодня если не указана
+      const plannedDate = createShiftByOperatorDto.plannedDay || new Date();
+
+      // Создаем смену
+      const shift = await this.prismaService.shift.create({
+        data: {
+          productId: product.id,
+          operatorId: operatorId,
+          plannedDate: plannedDate,
+          status: 'PLANNED',
+          packing: false,
+        },
+        include: {
+          product: true,
+        },
+      });
+
+      return { result: shift };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          this.logger.error('The shift data is not unique', error);
+          throw new HttpException(
+            { message: 'The shift data is not unique', error },
+            HttpStatus.BAD_REQUEST,
           );
         }
       }

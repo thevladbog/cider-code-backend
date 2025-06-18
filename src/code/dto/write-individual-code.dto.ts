@@ -6,7 +6,7 @@ import {
 import { z } from 'zod';
 
 const IndividualCode = z.object({
-  code: z.string(),
+  code: z.array(z.string()).min(1, 'At least one code is required'),
   status: IndividualCodeStatusSchema,
   productId: z.string(),
   boxesCodeId: z.number().optional(),
