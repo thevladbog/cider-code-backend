@@ -1,5 +1,26 @@
 # Changelog
 
+# [1.1.0](https://github.com/thevladbog/cider-code-backend/compare/v1.0.2...v1.1.0) (2025-06-19)
+
+
+### Bug Fixes
+
+* fixed minor issues ([f61e687](https://github.com/thevladbog/cider-code-backend/commit/f61e687253240cc8f3b93961ec16e27238213ad1))
+* fixed minor issues ([b117007](https://github.com/thevladbog/cider-code-backend/commit/b117007fdf8bc363c462f6652d72f915d625a1b7))
+* fixed transaction ([7689b8a](https://github.com/thevladbog/cider-code-backend/commit/7689b8add985484a54e660153410c4dc35c4f03e))
+* fixed zod typing ([e9dcdd9](https://github.com/thevladbog/cider-code-backend/commit/e9dcdd9b12d41fb2c83d63073f2eedd20a874d96))
+* minor fixes ([c2590ba](https://github.com/thevladbog/cider-code-backend/commit/c2590ba76fc1fb03e05d5fee021f58054b9acc56))
+* minor fixes ([5c41fb3](https://github.com/thevladbog/cider-code-backend/commit/5c41fb3a7f25ac210c9dcd0d756e04c5f10a7ebc))
+
+
+### Features
+
+* added changing version in package.json on release ([628fa00](https://github.com/thevladbog/cider-code-backend/commit/628fa00b8e54165116fc25da1519acb773b398a2))
+* added json url for openApi ([4537999](https://github.com/thevladbog/cider-code-backend/commit/45379998e05438ce0957fe88ee9316c83176d719))
+* **api:** add endpoints for operator shift creation and code download, improve DTOs and validation ([1f820de](https://github.com/thevladbog/cider-code-backend/commit/1f820de5aa2adeea465ca26636fd28b9224320b3))
+* **api:** enhance Swagger documentation across all controllers ([669450d](https://github.com/thevladbog/cider-code-backend/commit/669450da6e5500d4f748e55c3e5a1183a5cd322e))
+* implement code packaging and status update endpoints ([59bae5f](https://github.com/thevladbog/cider-code-backend/commit/59bae5fd226727194370b07fc5eb805880b9c29f))
+
 # [1.0.0-beta.17](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2025-06-19)
 
 ## [1.0.2](https://github.com/thevladbog/cider-code-backend/compare/v1.0.1...v1.0.2) (2025-06-09)
