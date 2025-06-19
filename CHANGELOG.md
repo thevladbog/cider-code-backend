@@ -1,5 +1,18 @@
 # Changelog
 
+# [1.0.0-beta.17](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2025-06-19)
+
+
+### Bug Fixes
+
+* minor fixes ([c2590ba](https://github.com/thevladbog/cider-code-backend/commit/c2590ba76fc1fb03e05d5fee021f58054b9acc56))
+
+
+### Features
+
+* added json url for openApi ([4537999](https://github.com/thevladbog/cider-code-backend/commit/45379998e05438ce0957fe88ee9316c83176d719))
+* **api:** add endpoints for operator shift creation and code download, improve DTOs and validation ([1f820de](https://github.com/thevladbog/cider-code-backend/commit/1f820de5aa2adeea465ca26636fd28b9224320b3))
+
 # [1.0.0-beta.16](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2025-06-13)
 
 
