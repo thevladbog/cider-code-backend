@@ -3,7 +3,7 @@ import { BoxesCodeSchema } from 'prisma/generated/zod';
 import { z } from 'zod';
 
 const GetNextBoxesCode = z.object({
-  gln: z.string(),
+  gln: z.string().optional(),
   productId: z.string(),
   currentSscc: z.string().length(18).optional(),
 });

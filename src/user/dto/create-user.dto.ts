@@ -40,3 +40,7 @@ export class IUserFindMany {
 export class IUserFindOne {
   result: CreatedUserDto;
 }
+
+export class UserLoginResponse {
+  user: CreatedUserDto;
+}

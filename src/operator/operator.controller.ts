@@ -22,6 +22,7 @@ import {
   CreatedOperatorDto,
   IOperatorFindMany,
   IOperatorFindOne,
+  OperatorLoginResponse,
 } from './dto/create-operator.dto';
 import { UpdateOperatorDto } from './dto/update-operator.dto';
 import { ApiQuery, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -55,6 +56,7 @@ export class OperatorController {
   ): Promise<CreatedOperatorDto> {
     return await this.operatorService.createOperator(createOperatorDto);
   }
+
   @ApiOperation({
     summary: 'Update operator',
     description: 'Update operator information such as name or barcode',
@@ -81,6 +83,7 @@ export class OperatorController {
 
     return res;
   }
+
   @ApiOperation({
     summary: 'Login operator',
     description: 'Authenticate an operator using barcode and return JWT token',
@@ -89,20 +92,21 @@ export class OperatorController {
   @ApiResponse({
     status: 201,
     description: 'Operator login successful',
-    type: Boolean,
+    type: OperatorLoginResponse,
   })
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(ZodValidationPipe)
   @Post('/login')
   async login(
     @Body() loginOperatorDto: LoginOperatorDto,
-  ): Promise<{ token: string }> {
+  ): Promise<OperatorLoginResponse> {
     const token = await this.operatorService.loginOperator(
       loginOperatorDto.barcode,
     );
 
     return { token };
   }
+
   @ApiOperation({
     summary: 'Get all operators',
     description: 'Retrieve a paginated list of all operators in the system',
@@ -134,6 +138,7 @@ export class OperatorController {
   ): Promise<IOperatorFindMany> {
     return await this.operatorService.getAll(page, limit);
   }
+
   @ApiOperation({
     summary: 'Get operator by ID',
     description: 'Retrieve detailed information about a specific operator',
@@ -154,6 +159,7 @@ export class OperatorController {
   async findOne(@Param('id') id: string): Promise<IOperatorFindOne> {
     return await this.operatorService.getOne(id);
   }
+
   @ApiOperation({
     summary: 'Get current operator',
     description: 'Get details of the currently authenticated operator',
