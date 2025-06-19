@@ -29,3 +29,7 @@ export class IOperatorFindMany {
 export class IOperatorFindOne {
   result: CreatedOperatorDto;
 }
+
+export class OperatorLoginResponse {
+  token: string;
+}

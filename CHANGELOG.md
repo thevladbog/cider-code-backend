@@ -1,9 +1,22 @@
 # Changelog
 
+# [1.0.0-beta.17](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2025-06-19)
+
 ## [1.0.2](https://github.com/thevladbog/cider-code-backend/compare/v1.0.1...v1.0.2) (2025-06-09)
 
 
+
 ### Bug Fixes
+
+* minor fixes ([c2590ba](https://github.com/thevladbog/cider-code-backend/commit/c2590ba76fc1fb03e05d5fee021f58054b9acc56))
+
+
+### Features
+
+* added json url for openApi ([4537999](https://github.com/thevladbog/cider-code-backend/commit/45379998e05438ce0957fe88ee9316c83176d719))
+* **api:** add endpoints for operator shift creation and code download, improve DTOs and validation ([1f820de](https://github.com/thevladbog/cider-code-backend/commit/1f820de5aa2adeea465ca26636fd28b9224320b3))
+
+# [1.0.0-beta.16](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2025-06-13)
 
 * fixed docker compose ([b868de2](https://github.com/thevladbog/cider-code-backend/commit/b868de2f391462bd694d75a536697ed9e788fd03))
 
@@ -15,7 +28,6 @@
 * fixing docker-compose ([b17c7a0](https://github.com/thevladbog/cider-code-backend/commit/b17c7a02f30f70e151c620763ebf5472d62556a6))
 
 # 1.0.0 (2025-06-09)
-
 
 ### Bug Fixes
 
@@ -114,7 +126,9 @@
 * trying using ssh ([a4f0689](https://github.com/thevladbog/cider-code-backend/commit/a4f068985ac7d059d442af81a7f367ab866e8cca))
 
 
+
 ### Features
+
 
 * added checks for JSON string ([7b1124e](https://github.com/thevladbog/cider-code-backend/commit/7b1124ea36088896e28d64f6e59e6905f4a8f152))
 * added CORS origins ([7460db3](https://github.com/thevladbog/cider-code-backend/commit/7460db371fb57904293216b221f0540ef36f8569))
@@ -137,6 +151,7 @@
 * **saby:** added PUT method ([236b40d](https://github.com/thevladbog/cider-code-backend/commit/236b40db194904f6b6e225db0bd40a91f9fb0d11))
 * **saby:** created saby resource ([2615cdd](https://github.com/thevladbog/cider-code-backend/commit/2615cdd03f3e0f891ceb6c69ab97f30d8dad1cab))
 * set prod and beta ci cd ([4ac8bc8](https://github.com/thevladbog/cider-code-backend/commit/4ac8bc889e35b738188c4f7111ec156eab39353b))
+
 
 # [1.0.0-beta.15](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2025-06-08)
 

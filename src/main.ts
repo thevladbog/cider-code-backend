@@ -57,11 +57,13 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config); // serializable object - conform to OpenAPI
   SwaggerModule.setup('api', app, document, {
-    swaggerUiEnabled: false,
+    ui: true,
+    jsonDocumentUrl: 'api/json',
+    yamlDocumentUrl: 'api/yaml',
   });
 
   app.use(
-    '/api',
+    '/api/scalar',
     apiReference({
       theme: 'kepler',
       darkMode: true,

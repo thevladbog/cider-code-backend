@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { SelectProductDto } from 'src/product/dto/select-product.dto';
+import { ProductSchema } from 'src/product/dto/select-product.dto';
 import { z } from 'zod';
 
 const ShiftStatusSchema = z.enum([
@@ -25,6 +25,18 @@ const ShiftCreateSchema = z
 
 export class CreateShiftDto extends createZodDto(ShiftCreateSchema) {}
 
+// DTO для создания смены оператором
+const CreateShiftByOperatorSchema = z
+  .object({
+    ean: z.string().min(8).max(14), // EAN может быть 8, 12, 13 или 14 цифр
+    plannedDay: z.coerce.date().optional(), // Если не указана - сегодня
+  })
+  .strict();
+
+export class CreateShiftByOperatorDto extends createZodDto(
+  CreateShiftByOperatorSchema,
+) {}
+
 export const ShiftSchema = z.object({
   status: ShiftStatusSchema,
   id: z.string(),
@@ -41,9 +53,21 @@ export const ShiftSchema = z.object({
 
 export class ShiftDto extends createZodDto(ShiftSchema) {}
 
-export interface OperatorShiftDto extends Omit<ShiftDto, 'productId'> {
-  product: SelectProductDto;
-}
+export const ShiftSchemaOperator = z.object({
+  status: ShiftStatusSchema,
+  id: z.string(),
+  plannedDate: z.coerce.date(),
+  product: ProductSchema,
+  plannedCount: z.number().int().nullable(),
+  factCount: z.number().int().nullable(),
+  packing: z.boolean(),
+  countInBox: z.number().int().nullable(),
+  operatorId: z.string().nullable(),
+  created: z.coerce.date(),
+  modified: z.coerce.date().nullable(),
+});
+
+export class OperatorShiftDto extends createZodDto(ShiftSchemaOperator) {}
 
 export class IShiftFindMany {
   result: OperatorShiftDto[];
@@ -51,10 +75,11 @@ export class IShiftFindMany {
   page: number;
   limit: number;
   totalPage: number;
+  labelTemplate?: string;
 }
 
 export class IShiftFindOne {
-  result: ShiftDto;
+  result: OperatorShiftDto;
 }
 
 export class IDeletedShift {
