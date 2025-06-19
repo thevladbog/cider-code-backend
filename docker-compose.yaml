@@ -10,7 +10,7 @@ services:
     volumes:
       - /opt/pgdata/stable:/var/lib/postgresql/data
     networks:
-      - backend
+      - backend-stable
     restart: unless-stopped
 
   postgres-beta:
@@ -22,7 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - /opt/pgdata/beta:/var/lib/postgresql/data
+      - /opt/pgdata/beta:/var/lib/postgresql/data/stable
     networks:
       - backend
     restart: unless-stopped
@@ -47,10 +47,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_letsencrypt:/letsencrypt
     networks:
+      - backend-stable
       - backend
       - proxy
     restart: unless-stopped
-
   app-stable:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:latest
     depends_on:
@@ -71,10 +71,9 @@ services:
       - traefik.http.routers.app-stable.tls.certresolver=letsencrypt
       - traefik.http.services.app-stable.loadbalancer.server.port=3033
     networks:
-      - backend
+      - backend-stable
       - proxy
     restart: unless-stopped
-
   app-beta:
     image: cr.yandex/${YCR_REGISTRY_ID}/bottlecode-backend:beta
     depends_on:
@@ -101,6 +100,7 @@ services:
 
 networks:
   backend:
+  backend-stable:
   proxy:
     external: true
 
