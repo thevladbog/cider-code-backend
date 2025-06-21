@@ -436,16 +436,14 @@ export class CodeService {
       }
 
       if (includeBoxes) {
-        // Получаем коробки для данной смены с индивидуальными кодами
-        const boxesWithCodes = await this.prisma.boxesCode.findMany({
-          where: { shiftId: shiftId },
+        // Получаем все индивидуальные коды для данной смены, которые привязаны к коробкам
+        const codesInBoxes = await this.prisma.individualCode.findMany({
+          where: {
+            shiftId: shiftId,
+            boxesCodeId: { not: null },
+          },
           include: {
-            individualCodes: {
-              where: {
-                shiftId: shiftId,
-              },
-              orderBy: { created: 'asc' },
-            },
+            BoxesCode: true,
           },
           orderBy: { created: 'asc' },
         });
@@ -461,18 +459,32 @@ export class CodeService {
 
         const lines: string[] = [];
 
-        // Если есть коробки с кодами
-        if (boxesWithCodes.length > 0) {
-          boxesWithCodes.forEach((box) => {
-            // Добавляем SSCC код коробки
-            lines.push(box.sscc);
+        // Группируем коды по коробкам
+        const codesByBox = new Map<string, { sscc: string; codes: string[] }>();
 
-            // Добавляем все индивидуальные коды из этой коробки
-            box.individualCodes.forEach((code) => {
-              lines.push(code.code);
-            });
+        codesInBoxes.forEach((code) => {
+          if (code.BoxesCode) {
+            const boxId = code.BoxesCode.id.toString();
+            if (!codesByBox.has(boxId)) {
+              codesByBox.set(boxId, {
+                sscc: code.BoxesCode.sscc,
+                codes: [],
+              });
+            }
+            codesByBox.get(boxId)!.codes.push(code.code);
+          }
+        });
+
+        // Добавляем коробки с их кодами
+        codesByBox.forEach((boxData) => {
+          // Добавляем SSCC код коробки
+          lines.push(boxData.sscc);
+
+          // Добавляем все индивидуальные коды из этой коробки
+          boxData.codes.forEach((code) => {
+            lines.push(code);
           });
-        }
+        });
 
         // Добавляем индивидуальные коды, которые не в коробках
         unboxedCodes.forEach((code) => {
@@ -480,7 +492,7 @@ export class CodeService {
         });
 
         // Если коробки не формировались, но флаг был проставлен
-        if (boxesWithCodes.length === 0 && unboxedCodes.length > 0) {
+        if (codesByBox.size === 0 && unboxedCodes.length > 0) {
           this.logger.warn(
             `No boxes found for shift ${shiftId}, but includeBoxes flag was set. Returning only individual codes.`,
           );

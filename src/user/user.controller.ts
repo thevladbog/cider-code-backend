@@ -94,14 +94,21 @@ export class UserController {
     type: Number,
     description: 'Items per page',
   })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search by first name, last name, or email',
+  })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
   ): Promise<IUserFindMany> {
-    return await this.userService.findAll(page, limit);
+    return await this.userService.findAll(page, limit, search);
   }
   @ApiOperation({
     summary: 'Find user by ID',
@@ -150,6 +157,7 @@ export class UserController {
     const result = await this.userService.update(id, updateUserDto);
     return { result };
   }
+
   @ApiOperation({
     summary: 'Delete user',
     description: 'Remove a user from the system',

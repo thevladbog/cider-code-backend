@@ -63,13 +63,51 @@ export class UserService {
       throw error;
     }
   }
+  async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<IUserFindMany> {
+    // Создаем условия поиска
+    let whereCondition: Prisma.UserWhereInput = {};
 
-  async findAll(page: number, limit: number): Promise<IUserFindMany> {
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      whereCondition = {
+        OR: [
+          {
+            firstName: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+          {
+            lastName: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      };
+    }
+
     const raw = await this.prismaService.$transaction([
-      this.prismaService.user.count(),
+      this.prismaService.user.count({
+        where: whereCondition,
+      }),
       this.prismaService.user.findMany({
+        where: whereCondition,
         take: limit,
         skip: limit * (page - 1),
+        orderBy: {
+          created: 'desc',
+        },
       }),
     ]);
 
