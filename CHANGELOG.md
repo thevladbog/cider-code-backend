@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.2.0](https://github.com/thevladbog/cider-code-backend/compare/v1.1.0...v1.2.0) (2025-06-21)
+
+
+### Bug Fixes
+
+* fixed minor issues ([428ffba](https://github.com/thevladbog/cider-code-backend/commit/428ffba143cd44474483b71d50f3f4a1f186de04))
+
+
+### Features
+
+* enhance API documentation and add GitHub Copilot instructions ([9d6ce80](https://github.com/thevladbog/cider-code-backend/commit/9d6ce80d0e33c782f1a9a25d3eb382473814f681))
+
 # [1.1.0-beta.1](https://github.com/thevladbog/cider-code-backend/compare/v1.0.2...v1.1.0-beta.1) (2025-06-21)
 
 
