@@ -99,10 +99,7 @@ jobs:
         if: ${{ needs.prepare-release-info.outputs.is_beta == 'false' }}
         run: |
           TAG=${{ needs.prepare-release-info.outputs.version }}
-          docker build \
-            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \ 
-            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-            -t $REGISTRY:$TAG .
+          docker build --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} -t $REGISTRY:$TAG .
           docker tag $REGISTRY:$TAG $REGISTRY:latest
           docker push $REGISTRY:$TAG
           docker push $REGISTRY:latest

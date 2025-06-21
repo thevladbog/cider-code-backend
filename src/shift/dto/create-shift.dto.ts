@@ -14,10 +14,10 @@ const ShiftCreateSchema = z
   .object({
     id: z.string().optional(),
     plannedDate: z.coerce.date().optional(),
-    plannedCount: z.number().int().optional().nullable(),
-    factCount: z.number().int().optional().nullable(),
+    plannedCount: z.number().int().optional(),
+    factCount: z.number().int().optional(),
     packing: z.boolean().optional(),
-    countInBox: z.number().int().optional().nullable(),
+    countInBox: z.number().int().optional(),
     status: z.lazy(() => ShiftStatusSchema).optional(),
     productId: z.string(),
   })
