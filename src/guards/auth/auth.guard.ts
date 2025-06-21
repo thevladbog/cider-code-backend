@@ -16,12 +16,20 @@ import * as fs from 'fs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private readonly logger = new Logger(AuthGuard.name);
+  private readonly publicKey: string;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly reflector: Reflector,
-  ) {}
-  private readonly logger = new Logger(AuthGuard.name);
+  ) {
+    // Read the public key once during initialization
+    this.publicKey = fs.readFileSync(
+      __dirname + '/../../../../config/cert/jwt_public_key.pem',
+      'utf8',
+    );
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const jwtTypes = this.reflector.getAllAndOverride<string[]>('jwtType', [
@@ -34,10 +42,6 @@ export class AuthGuard implements CanActivate {
     }
 
     const request: Request = context.switchToHttp().getRequest();
-    const publicKey: string = fs.readFileSync(
-      __dirname + '/../../../../config/cert/jwt_public_key.pem',
-      'utf8',
-    );
 
     let lastError: unknown = null;
     for (const type of jwtTypes) {
@@ -50,7 +54,7 @@ export class AuthGuard implements CanActivate {
         }
         if (!token) throw new UnauthorizedException('JWT token missing');
         const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
-          publicKey,
+          publicKey: this.publicKey,
           algorithms: ['RS256'],
         });
         const revokedToken = await this.prisma.revokedToken.findUnique({

@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 const ShiftStatusSchema = z.enum([
