@@ -21,7 +21,6 @@
 * **api:** add endpoints for operator shift creation and code download, improve DTOs and validation ([1f820de](https://github.com/thevladbog/cider-code-backend/commit/1f820de5aa2adeea465ca26636fd28b9224320b3))
 * **api:** enhance Swagger documentation across all controllers ([669450d](https://github.com/thevladbog/cider-code-backend/commit/669450da6e5500d4f748e55c3e5a1183a5cd322e))
 * enhance API documentation and add GitHub Copilot instructions ([9d6ce80](https://github.com/thevladbog/cider-code-backend/commit/9d6ce80d0e33c782f1a9a25d3eb382473814f681))
-* implement code packaging and status update endpoints ([59bae5f](https://github.com/thevladbog/cider-code-backend/commit/59bae5fd226727194370b07fc5eb805880b9c29f))
 
 # [1.0.0-beta.17](https://github.com/thevladbog/cider-code-backend/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2025-06-19)
 
