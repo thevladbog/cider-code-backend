@@ -38,15 +38,57 @@ export class ShiftService {
       throw error;
     }
   }
+  async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+  ): Promise<IShiftFindMany> {
+    // Создаем условия поиска
+    let whereCondition: Prisma.ShiftWhereInput = {};
 
-  async findAll(page: number, limit: number): Promise<IShiftFindMany> {
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      whereCondition = {
+        OR: [
+          {
+            id: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+          {
+            product: {
+              shortName: {
+                contains: searchTerm,
+                mode: 'insensitive',
+              },
+            },
+          },
+          {
+            product: {
+              fullName: {
+                contains: searchTerm,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      };
+    }
+
     const raw = await this.prismaService.$transaction([
-      this.prismaService.shift.count(),
+      this.prismaService.shift.count({
+        where: whereCondition,
+      }),
       this.prismaService.shift.findMany({
+        where: whereCondition,
         take: limit,
         skip: limit * (page - 1),
         include: {
           product: true,
+        },
+        orderBy: {
+          created: 'desc',
         },
       }),
     ]);

@@ -96,8 +96,8 @@ export class CodeController {
     status: 404,
     description: 'No previous SSCC codes found in database',
   })
-  // @JwtType(JWT_TYPE.Operator)
-  // @UseGuards(AuthGuard)
+  @JwtType(JWT_TYPE.Operator)
+  @UseGuards(AuthGuard)
   @UsePipes(ZodValidationPipe)
   @Post('/boxes')
   @HttpCode(HttpStatus.CREATED)
@@ -165,6 +165,7 @@ export class CodeController {
   ): Promise<void> {
     await this.codeService.updateCodesStatus(updateCodesStatusDto);
   }
+
   @ApiOperation({
     summary: 'Download codes as text file',
     description:
