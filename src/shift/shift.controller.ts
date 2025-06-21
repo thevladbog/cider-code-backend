@@ -26,7 +26,7 @@ import {
   ShiftDto,
 } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
-import { ApiQuery, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { JwtType } from 'src/guards/auth/jwt.metadata';
 import { JWT_TYPE } from 'src/constants/jwt.constants';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
@@ -82,14 +82,21 @@ export class ShiftController {
     type: Number,
     description: 'Items per page',
   })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search by shift ID, product short name, or product full name',
+  })
   @JwtType(JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
   ): Promise<IShiftFindMany> {
-    return await this.shiftService.findAll(page, limit);
+    return await this.shiftService.findAll(page, limit, search);
   }
 
   @ApiOperation({
@@ -115,14 +122,21 @@ export class ShiftController {
     type: Number,
     description: 'Items per page',
   })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search by shift ID, product short name, or product full name',
+  })
   @JwtType(JWT_TYPE.Operator)
   @UseGuards(AuthGuard)
   @Get('/operator')
   async findAllForApp(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
   ): Promise<IShiftFindMany> {
-    return await this.shiftService.findAll(page, limit);
+    return await this.shiftService.findAll(page, limit, search);
   }
 
   @ApiOperation({
@@ -168,6 +182,7 @@ export class ShiftController {
   async findOneForApp(@Param('id') id: string): Promise<IShiftFindOne> {
     return await this.shiftService.findOne(id);
   }
+
   @ApiOperation({
     summary: 'Update shift',
     description:
@@ -183,7 +198,11 @@ export class ShiftController {
     status: 404,
     description: "Shift can't be found or something went wrong",
   })
-  @JwtType(JWT_TYPE.Operator)
+  @ApiBody({
+    type: UpdateShiftDto,
+    description: 'Json structure for updating shift',
+  })
+  @JwtType(JWT_TYPE.Operator, JWT_TYPE.Common)
   @UseGuards(AuthGuard)
   @UsePipes(ZodValidationPipe)
   @Patch(':id')
@@ -232,6 +251,30 @@ export class ShiftController {
       createShiftByOperatorDto,
       operatorId,
     );
+  }
+
+  @ApiOperation({
+    summary: 'Create shift by SABY',
+    description:
+      'Create a new production shift via SABY external application without authentication',
+    tags: ['Shift', 'Saby Shifts', 'External'],
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Shift successfully created by SABY',
+    type: ShiftDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "Data isn't unique or invalid",
+  })
+  @UsePipes(ZodValidationPipe)
+  @Post('create/saby')
+  @HttpCode(HttpStatus.CREATED)
+  async createBySaby(
+    @Body() createShiftDto: CreateShiftDto,
+  ): Promise<ShiftDto> {
+    return await this.shiftService.create(createShiftDto);
   }
 
   @ApiOperation({

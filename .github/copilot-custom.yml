@@ -1,0 +1,190 @@
+# GitHub Copilot Custom Instructions for BOTTLE [CODE] Backend
+# This file provides context and coding standards for the BOTTLE [CODE] backend application
+
+project:
+  name: 'BOTTLE [CODE] Backend'
+  description: 'NestJS backend for bottle code management system with tracking, production shifts, and SABY integration'
+  version: '1.0.0-beta.16'
+  author: 'Vladislav Bogatyrev'
+
+architecture:
+  framework: 'NestJS'
+  language: 'TypeScript'
+  database: 'PostgreSQL with Prisma ORM'
+  authentication: 'JWT with RS256 algorithm using public/private key pairs'
+  validation: 'Zod with nestjs-zod integration'
+  logging: 'Pino with Sentry integration'
+  documentation: 'Swagger/OpenAPI with Scalar API reference'
+
+project_structure:
+  modules:
+    - 'User Management (authentication, authorization, password reset)'
+    - 'Product Management (GTIN codes, alcohol codes, product lifecycle)'
+    - 'Code Management (individual codes, box codes, SSCC generation)'
+    - 'Shift Management (production shifts, operator assignments)'
+    - 'Operator Management (operator authentication via barcode)'
+    - 'SABY Integration (external system integration for delivery orders)'
+    - 'Mail Service (email notifications and password reset)'
+
+database_schema:
+  main_entities:
+    - 'Product: Product information with GTIN and alcohol codes'
+    - 'IndividualCode: Individual product codes with status tracking'
+    - 'BoxesCode: SSCC box codes containing multiple individual codes'
+    - 'Shift: Production shifts with planning and tracking'
+    - 'Operator: Production operators with barcode authentication'
+    - 'User: System users with role-based access'
+    - 'OrdersToDelivery: SABY delivery order integration'
+
+  key_relationships:
+    - 'Products have multiple IndividualCodes and BoxesCode'
+    - 'Shifts are assigned to Products and Operators'
+    - 'IndividualCodes can be packed into BoxesCode'
+    - 'Users and Operators have separate authentication systems'
+
+coding_standards:
+  file_structure:
+    - 'Each module follows NestJS pattern: module.ts, controller.ts, service.ts'
+    - 'DTOs are in dto/ subdirectory with Zod validation schemas'
+    - 'Tests are in test/ subdirectory or alongside source files with .spec.ts extension'
+
+  naming_conventions:
+    - 'Use PascalCase for classes and interfaces'
+    - 'Use camelCase for methods, properties, and variables'
+    - 'Use kebab-case for file names'
+    - "Prefix interfaces with 'I' (e.g., IUserFindMany)"
+    - "Suffix DTOs with 'Dto' (e.g., CreateUserDto)"
+
+  validation:
+    - 'Use Zod schemas for all input validation'
+    - 'Create DTOs using createZodDto from nestjs-zod'
+    - 'Apply @UsePipes(ZodValidationPipe) to controllers'
+
+  authentication:
+    - 'Use @JwtType decorator to specify token type (Common, Operator)'
+    - 'Apply @UseGuards(AuthGuard) for protected endpoints'
+    - 'JWT tokens use RS256 algorithm with separate public/private keys'
+    - 'Common users use cookie-based authentication'
+    - 'Operators use Bearer token authentication'
+
+  api_documentation:
+    - 'Use @ApiOperation for endpoint descriptions'
+    - 'Use @ApiResponse for response documentation'
+    - 'Use @ApiTags for grouping endpoints'
+    - 'Use @ApiQuery and @ApiBody for parameter documentation'
+
+  error_handling:
+    - 'Use HttpException with appropriate HTTP status codes'
+    - 'Log errors using Logger from @nestjs/common'
+    - 'Use Prisma error handling for database operations'
+    - 'Global exception filters handle Prisma and HTTP exceptions'
+
+authentication_patterns:
+  user_auth:
+    - 'Email/password authentication for admin users'
+    - 'JWT tokens stored in httpOnly cookies'
+    - 'Password hashing with Argon2'
+    - 'Password reset via email tokens'
+    - 'Token revocation support'
+
+  operator_auth:
+    - 'Barcode-based authentication for production operators'
+    - 'Bearer token authentication for API access'
+    - 'Separate JWT token type for operators'
+
+business_logic:
+  code_generation:
+    - 'Individual codes are 32-character strings'
+    - 'SSCC box codes are 22-character strings with counter logic'
+    - 'Codes have status tracking (NEW, USED for individual codes)'
+
+  production_flow:
+    - 'Shifts are planned with products and operators'
+    - 'Individual codes are generated during production'
+    - 'Codes can be packed into boxes with SSCC generation'
+    - 'Status tracking throughout the production process'
+
+  external_integration:
+    - 'SABY system integration for delivery orders'
+    - 'Email service for notifications and password reset'
+    - 'Sentry for error tracking and monitoring'
+
+common_patterns:
+  service_methods:
+    - 'create() for entity creation'
+    - 'findAll() for paginated lists with search'
+    - 'findOne() for single entity retrieval'
+    - 'update() for entity updates'
+    - 'remove() for entity deletion'
+
+  dto_patterns:
+    - 'CreateXxxDto for creation input'
+    - 'UpdateXxxDto for update input'
+    - 'SelectXxxDto for response data'
+    - 'IXxxFindMany for paginated responses'
+    - 'IXxxFindOne for single entity responses'
+
+  pagination:
+    - 'Use page and limit query parameters'
+    - 'Default page size is typically 5 or 999 for unlimited'
+    - 'Include search functionality where applicable'
+    - 'Return total count and pagination metadata'
+
+development_practices:
+  testing:
+    - 'Unit tests for services with .spec.ts suffix'
+    - 'Controller tests for endpoint validation'
+    - 'Use Jest testing framework'
+    - 'Mock external dependencies'
+
+  environment:
+    - 'Use .env files for configuration'
+    - 'Support for development, beta, and production environments'
+    - 'HTTPS in development with self-signed certificates'
+    - 'Docker support with docker-compose.yaml'
+
+  deployment:
+    - 'Semantic versioning with semantic-release'
+    - 'Sentry integration for production monitoring'
+    - 'Prisma migrations for database schema changes'
+    - 'Source map generation for debugging'
+
+key_dependencies:
+  core:
+    - '@nestjs/core, @nestjs/common - NestJS framework'
+    - '@prisma/client, prisma - Database ORM'
+    - '@nestjs/jwt - JWT authentication'
+    - 'nestjs-zod, zod - Validation'
+    - 'nestjs-pino - Logging'
+
+  security:
+    - 'argon2 - Password hashing'
+    - 'cookie-parser - Cookie handling'
+    - '@sentry/nestjs - Error monitoring'
+
+  utilities:
+    - 'nanoid - ID generation'
+    - 'nodemailer - Email sending'
+    - 'handlebars - Email templates'
+
+special_considerations:
+  - 'Separate authentication systems for users and operators'
+  - 'Complex code generation logic with status tracking'
+  - 'External SABY system integration without authentication'
+  - 'Production environment error monitoring with Sentry'
+  - 'Email service integration for user management'
+  - 'HTTPS certificates management for development'
+  - 'Prisma schema with custom Zod type generation'
+  - 'API documentation with both Swagger and Scalar'
+
+guidelines_for_new_code:
+  - 'Follow existing module structure and patterns'
+  - 'Use Zod for all input validation'
+  - 'Implement proper error handling with logging'
+  - 'Add Swagger documentation for all endpoints'
+  - 'Use appropriate authentication guards'
+  - 'Follow the established DTO naming conventions'
+  - 'Include unit tests for new functionality'
+  - 'Use TypeScript strict mode features'
+  - 'Implement proper pagination for list endpoints'
+  - 'Handle Prisma exceptions appropriately'
